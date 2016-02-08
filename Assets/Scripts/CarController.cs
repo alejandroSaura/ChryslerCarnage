@@ -160,7 +160,7 @@ public class CarController : MonoBehaviour {
 
 		// Calculate forces
 
-		Vector3 brakeForce = - transform.forward * brakePower * input.userBrake;
+		Vector3 brakeForce = - transform.forward * brakePower * input.userBrake; //TO-DO: this should be done by the wheels
 
 		Vector3 dragForce = - transform.forward * (velocity_forward*velocity_forward) * dragConstant;
 		Debug.DrawLine(transform.position, transform.position + dragForce/200.0f, Color.red);
