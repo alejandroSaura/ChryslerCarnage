@@ -46,6 +46,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\CarController.cs" />
+     <Compile Include="Assets\Scripts\InputInterface.cs" />
+     <Compile Include="Assets\Scripts\UserInput.cs" />
+     <Compile Include="Assets\Scripts\Wheel.cs" />
      <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
      <None Include="Assets\ArtAssets\Don&apos;t add this folder to git.txt" />
