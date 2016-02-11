@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\CarController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
+    <Compile Include="Assets\Scripts\Steering.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
     <Compile Include="Assets\Scripts\Wheel.cs" />
     <Compile Include="Assets\Scripts\WheelExperiment.cs" />
