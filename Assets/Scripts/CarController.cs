@@ -33,10 +33,12 @@ public class CarController : MonoBehaviour {
 	Transform FrontAxis;
 	Transform RearAxis;
 
-	Wheel frontLeftWheel;
-	Wheel frontRightWheel;
-	Wheel backLeftWheel;
-	Wheel backRightWheel;
+    Vector3 centerOfMassPos;
+
+	WheelExperiment frontLeftWheel;
+    WheelExperiment frontRightWheel;
+    WheelExperiment backLeftWheel;
+    WheelExperiment backRightWheel;
 
 	Rigidbody _rigidbody;
 	Vector3 frictionForces;
@@ -56,17 +58,18 @@ public class CarController : MonoBehaviour {
 
 		_rigidbody = GetComponent<Rigidbody>();
 		CenterOfMass = transform.FindChild("CenterOfMass");
+        centerOfMassPos = CenterOfMass.position;
 		FrontAxis = transform.FindChild("FrontAxis");
 		RearAxis = transform.FindChild("RearAxis");
 
 		// wheels initialization
-		frontLeftWheel = transform.FindChild("frontLeftWheel").GetComponent<Wheel>();
+		frontLeftWheel = transform.FindChild("frontLeftWheel").GetComponent<WheelExperiment>();
 		frontLeftWheel.carRB = _rigidbody;
-		frontRightWheel = transform.FindChild("frontRightWheel").GetComponent<Wheel>();
+		frontRightWheel = transform.FindChild("frontRightWheel").GetComponent<WheelExperiment>();
 		frontRightWheel.carRB = _rigidbody;
-		backLeftWheel = transform.FindChild("backLeftWheel").GetComponent<Wheel>();
+		backLeftWheel = transform.FindChild("backLeftWheel").GetComponent<WheelExperiment>();
 		backLeftWheel.carRB = _rigidbody;
-		backRightWheel = transform.FindChild("backRightWheel").GetComponent<Wheel>();
+		backRightWheel = transform.FindChild("backRightWheel").GetComponent<WheelExperiment>();
 		backRightWheel.carRB = _rigidbody;
 
 		gearRatio = gearRatios[1]; // first gear
@@ -116,13 +119,16 @@ public class CarController : MonoBehaviour {
 		float weight = frontWeight + rearWeight;
 		float frontWeightPercent = frontWeight/weight;
 		float rearWeightPercent = rearWeight/weight;
-		gizmoPosition = FrontAxis.position*frontWeightPercent + RearAxis.position*rearWeightPercent;
+        //centerOfMassPos = Vector3.Lerp(centerOfMassPos, FrontAxis.localPosition * frontWeightPercent + RearAxis.localPosition * rearWeightPercent, Time.deltaTime);
 
-		// ----------------------------------------------------------
+        //gizmoPosition = CenterOfMass.position + centerOfMassPos;
+        gizmoPosition = FrontAxis.position* frontWeightPercent +RearAxis.position * rearWeightPercent;
 
-		// transfer weight to the wheels (so they can check if they slide)
+        // ----------------------------------------------------------
 
-		frontLeftWheel.supportedWeight = frontWeight/2;
+        // transfer weight to the wheels (so they can check if they slide)
+
+        frontLeftWheel.supportedWeight = frontWeight/2;
 		frontRightWheel.supportedWeight = frontWeight/2;
 		backLeftWheel.supportedWeight = rearWeight/2;
 		backRightWheel.supportedWeight = rearWeight/2;
@@ -171,16 +177,16 @@ public class CarController : MonoBehaviour {
 		frictionForces = dragForce + rollingForce;
 
 		if(velocity_forward > 0.1f) frictionForces += brakeForce;
-		if(Mathf.Abs(velocity_forward) < 0.1f && input.userBrake > 0.0f) _rigidbody.velocity = Vector3.zero; // to avoid small slidings
+		//if(Mathf.Abs(velocity_forward) < 0.1f && input.userBrake > 0.0f) _rigidbody.velocity = Vector3.zero; // to avoid small slidings
 
 		// Apply friction forces
 		_rigidbody.AddForce(frictionForces);
 
 		totalForceApplied = frictionForces 
-			+ frontLeftWheel.driveForce
-			+ frontRightWheel.driveForce
-			+ backLeftWheel.driveForce
-			+ backRightWheel.driveForce;
+			- (frontLeftWheel.tractionForce
+			+ frontRightWheel.tractionForce
+            + backLeftWheel.tractionForce
+            + backRightWheel.tractionForce) * transform.forward;
 	}
 
 

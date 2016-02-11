@@ -30,7 +30,10 @@ public class UserInput : InputInterface
 		{ //Keyboard
 			userThrottle = 0;
 			userBrake = 0;
-			if (Input.GetKey (KeyCode.W)) userThrottle = 1f;
+            if (Input.GetKey(KeyCode.W))
+            {
+                userThrottle = 1f;
+            }
 			if(Input.GetKey (KeyCode.S)) userBrake = 1f;	
 
 			if (Input.GetKey (KeyCode.D) && !Input.GetKey (KeyCode.A)) {
