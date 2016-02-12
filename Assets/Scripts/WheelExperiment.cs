@@ -3,6 +3,8 @@ using System.Collections;
 
 public class WheelExperiment : MonoBehaviour
 {
+
+
     
     public float wheelLinearVelocity;
     public float carLinearVelocity;
@@ -76,6 +78,6 @@ public class WheelExperiment : MonoBehaviour
         // Apply forces to the car
         carRB.AddForce(tractionTorque / wheelRadius * transform.forward);
         // Rotate the geometry
-        wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+        wheelGeometry.Rotate(0.0f, angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);        
     }
 }
