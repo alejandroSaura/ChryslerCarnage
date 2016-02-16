@@ -3,6 +3,9 @@ using System.Collections;
 
 public class PhysicsWheel : MonoBehaviour
 {
+    // parameters
+    public float maxSteerAngle = 35;
+
     // exposed to be set by carController
     public float supportedWeight;
     public float angularVelocity;
@@ -13,11 +16,14 @@ public class PhysicsWheel : MonoBehaviour
     public float latVelocity;
 
     Rigidbody mRigidbody;
+    // User input object
+    InputInterface input;
 
     void Start ()
     {
         mRigidbody = gameObject.GetComponent<Rigidbody>();
-        
+        // Get user input object
+        input = transform.parent.gameObject.GetComponent<InputInterface>();
     }
 
     void FixedUpdate ()
@@ -36,7 +42,7 @@ public class PhysicsWheel : MonoBehaviour
             latVelocity = transform.InverseTransformDirection(velocity).y;
             if (carLinearVelocity > 0.1f)
             {
-                mRigidbody.AddForceAtPosition(-latVelocity * transform.up * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5), transform.position);
+                mRigidbody.AddForceAtPosition(-latVelocity *1.5f * transform.up * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity/5), transform.position);
                 Debug.DrawLine(transform.position, transform.position + -latVelocity * transform.up * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5));
             }
             else
@@ -45,6 +51,21 @@ public class PhysicsWheel : MonoBehaviour
                 v.x = 0;
                 mRigidbody.velocity = v;
             }
+        }
+
+        //Rotate the wheel
+        HingeJoint joint = gameObject.GetComponent<HingeJoint>();
+        if (joint != null)
+        {
+            JointSpring spring = joint.spring;
+            spring.targetPosition = maxSteerAngle * input.userLeftStickHorizontal;
+            joint.spring = spring;
+
+            //float target = maxSteerAngle * input.userLeftStickHorizontal;
+
+            //Quaternion q = mRigidbody.rotation;
+            //q.eulerAngles = new Vector3(0, 0, target);
+            //mRigidbody.rotation = q;
         }
 
     }

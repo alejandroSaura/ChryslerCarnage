@@ -4,6 +4,7 @@ using System.Collections;
 public class CarPhysicsController : MonoBehaviour
 {
     // Parameters ----------------------------------------------------
+
     public AnimationCurve enginePowerTorqueCurve;
     public float brakePower = 1000;
 
@@ -182,11 +183,11 @@ public class CarPhysicsController : MonoBehaviour
         Vector3 frictionForces = dragForce + rollingForce;
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.up, out hit) && (hit.distance) < 1.7f) //if the wheel is touching the ground
+        if (Physics.Raycast(transform.position, -transform.up, out hit) && (hit.distance) < 1.7f) //if the wheels are touching the ground
         {
             mRigidbody.AddForce(frictionForces);
         }
 
-        lastVelocity = mRigidbody.velocity;
+        lastVelocity = mRigidbody.velocity;        
     }
 }
