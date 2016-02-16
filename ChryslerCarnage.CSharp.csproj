@@ -70,7 +70,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CarController.cs" />
+    <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
+    <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
     <Compile Include="Assets\Scripts\Steering.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
     <Compile Include="Assets\Scripts\Wheel.cs" />
