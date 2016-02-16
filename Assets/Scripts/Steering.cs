@@ -33,6 +33,6 @@ public class Steering : MonoBehaviour {
         targetVector = transform.parent.forward;
         targetVector = Quaternion.Euler(0, target, 0) * targetVector;      
 
-        transform.LookAt(transform.position + targetVector);        
+        transform.LookAt(transform.position + targetVector, transform.up);        
     }
 }
