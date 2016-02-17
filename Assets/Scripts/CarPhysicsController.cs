@@ -63,12 +63,18 @@ public class CarPhysicsController : MonoBehaviour
         mRigidbody.centerOfMass = centerOfMass;
 
         // Find all car parts
+        FrontAxis = transform.parent.FindChild("FrontAxis");
+        RearAxis = transform.parent.FindChild("RearAxis");
         frontLeftWheel = transform.parent.FindChild("FrontLeftWheel").GetComponent<PhysicsWheel>();
         frontRightWheel = transform.parent.FindChild("FrontRightWheel").GetComponent<PhysicsWheel>();
         backLeftWheel = transform.parent.FindChild("BackLeftWheel").GetComponent<PhysicsWheel>();
         backRightWheel = transform.parent.FindChild("BackRightWheel").GetComponent<PhysicsWheel>();
-        FrontAxis = transform.parent.FindChild("FrontAxis");
-        RearAxis = transform.parent.FindChild("RearAxis");
+
+        frontLeftWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
+        frontRightWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
+        backLeftWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
+        backRightWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
+
 
         distanceBetweenWheels = (transform.parent.FindChild("FrontLeftWheel").position - transform.parent.FindChild("FrontRightWheel").position).magnitude;
 
@@ -142,10 +148,10 @@ public class CarPhysicsController : MonoBehaviour
         weightPosition += transform.right * (distanceBetweenWheels*0.5f) * (rightWeightPercent) - transform.right * (distanceBetweenWheels * 0.5f) * (leftWeightPercent);
 
         // transfer the weight to the wheels
-        frontLeftWheel.supportedWeight = frontWeight / 2 + leftWeight / 2;
-        frontRightWheel.supportedWeight = frontWeight / 2 + rightWeight / 2;
-        backLeftWheel.supportedWeight = rearWeight / 2 + leftWeight / 2;
-        backRightWheel.supportedWeight = rearWeight / 2 + rightWeight / 2;
+        frontLeftWheel.supportedWeight = frontWeight / 2 ;
+        frontRightWheel.supportedWeight = frontWeight / 2 ;
+        backLeftWheel.supportedWeight = rearWeight / 2 ;
+        backRightWheel.supportedWeight = rearWeight / 2 ;
 
         //---------------------------------------------------------------------
 
@@ -168,12 +174,12 @@ public class CarPhysicsController : MonoBehaviour
         backLeftWheel.driveTorque = driveTorque / 4;
         backRightWheel.driveTorque = driveTorque / 4;        
 
-        // transfer brake
-        Vector3 brakeForce = -transform.forward * brakePower * input.userBrake;
-        frontLeftWheel.driveTorque = driveTorque / 4;
-        frontRightWheel.driveTorque = driveTorque / 4;
-        backLeftWheel.driveTorque = driveTorque / 4;
-        backRightWheel.driveTorque = driveTorque / 4;
+        // transfer brakeTorque to the wheels - brakeTorque is > 0.
+        float brakeTorque = brakePower * input.userBrake;
+        frontLeftWheel.brakeTorque = brakeTorque / 4;
+        frontRightWheel.brakeTorque = brakeTorque / 4;
+        backLeftWheel.brakeTorque = brakeTorque / 4;
+        backRightWheel.brakeTorque = brakeTorque / 4;
 
         // Calculate air friction force
         float velocity = transform.InverseTransformDirection(mRigidbody.velocity).z;

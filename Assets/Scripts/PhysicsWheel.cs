@@ -10,6 +10,7 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve userThrottleWeight;
     public AnimationCurve slipBrakeCurve;
     public AnimationCurve userBrakeWeight;
+    public float directionDeviationCorrection = -0.01f;
 
     // exposed to be set by carController
     public float supportedWeight;
@@ -17,6 +18,8 @@ public class PhysicsWheel : MonoBehaviour
     public float driveTorque;
     public float brakeTorque;
     public float wheelRadius = 0.7f;
+    public Rigidbody axisRigidBody;
+
 
     // debug
     public float latVelocity;
@@ -34,6 +37,10 @@ public class PhysicsWheel : MonoBehaviour
     float tractionTorque;
     float tractionForce;
 
+    Vector4 slipColor;
+    Vector4 tractionColor;
+
+
 
     void Start ()
     {
@@ -43,7 +50,16 @@ public class PhysicsWheel : MonoBehaviour
         input = transform.parent.gameObject.GetComponent<InputInterface>();
 
         meanWeightSupported = transform.parent.gameObject.GetComponent<Rigidbody>().mass * Physics.gravity.y / 4.0f;
+    }
 
+    void OnDrawGizmos()
+    {
+        // Debugging gizmos
+        Gizmos.color = slipColor;
+        Gizmos.DrawSphere(transform.position + new Vector3(0.0f, 1f, 0.0f), 0.2f);
+
+        Gizmos.color = tractionColor;
+        Gizmos.DrawSphere(transform.position + new Vector3(0.0f, 1.6f, 0.0f), 0.2f);
     }
 
     void FixedUpdate ()
@@ -71,7 +87,7 @@ public class PhysicsWheel : MonoBehaviour
             // Add forces:
 
             // particular cases ----------------------------------------------
-            if (carLinearVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
+            if (carLinearVelocity < 0.01f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
                 tractionTorque = 0;
                 slipRatio = 1;
@@ -83,7 +99,7 @@ public class PhysicsWheel : MonoBehaviour
             //-----------------------------------------------------------------
 
             // brake
-            if (carLinearVelocity > 0.1f && brakeTorque > 0)
+            if (carLinearVelocity > 0.01f && brakeTorque > 0)
             {
                 mRigidbody.AddForce(-brakeTorque / wheelRadius * (1 - weightFactor) * transform.forward);
                 slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * -(weightFactor);
@@ -92,17 +108,29 @@ public class PhysicsWheel : MonoBehaviour
                 Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 - weightFactor) * transform.forward, Color.red);
             }
 
-            // accelerate
-            mRigidbody.AddForce(tractionTorque / wheelRadius * transform.forward * 5);
+            // accelerate 
+            float rotation = maxSteerAngle * (input.userLeftStickHorizontal); //add an offset to correct the deviation bug
+            Quaternion q = new Quaternion();
+            q.eulerAngles = new Vector3(0, rotation, 0);
+            Vector3 headingDirection = q * transform.parent.forward;
+
+            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * headingDirection * 5, transform.position);
+            Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * headingDirection, Color.green);
+
 
             Vector3 velocity = mRigidbody.velocity;
 
             // lateral force
             latVelocity = transform.InverseTransformDirection(velocity).y;
-            if (carLinearVelocity > 0.1f)
+            if ((carLinearVelocity) > 0.1f)
             {
-                mRigidbody.AddForceAtPosition(-latVelocity *1.5f * transform.up * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity/5), transform.position);
-                Debug.DrawLine(transform.position, transform.position + -latVelocity * transform.up * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5));
+                mRigidbody.AddForceAtPosition(-(latVelocity) * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity/5) , transform.position);
+                Debug.DrawLine(transform.position, transform.position + -latVelocity * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5));
+            }
+            else if((carLinearVelocity) < -0.1f)
+            {
+                mRigidbody.AddForceAtPosition((latVelocity) * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5), transform.position);
+                Debug.DrawLine(transform.position, transform.position + -latVelocity * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5));
             }
             else
             {
@@ -110,6 +138,9 @@ public class PhysicsWheel : MonoBehaviour
                 v.x = 0;
                 mRigidbody.velocity = v;
             }
+
+            slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
+            tractionColor = new Vector4(1 - tractionFactor, 1 - tractionFactor, 1, 1);
         }
         // TO-DO: if not touching the ground set slipRatio to 1 and let the wheel spin freely.
 
