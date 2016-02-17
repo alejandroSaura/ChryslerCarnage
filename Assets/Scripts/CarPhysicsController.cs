@@ -6,6 +6,7 @@ public class CarPhysicsController : MonoBehaviour
     // Parameters ----------------------------------------------------
 
     public AnimationCurve enginePowerTorqueCurve;
+    public float enginePower = 10;
     public float brakePower = 1000;
 
     public float airDragConstant;
@@ -153,8 +154,8 @@ public class CarPhysicsController : MonoBehaviour
         rpm = maxAngularVel * gearRatio * differentialRatio * 60.0f / (2.0f * Mathf.PI);
         if (rpm < minRPM) rpm = minRPM; // don't let the engine go under the minimun rpm
 
-        // user uses a percentage of the maxEngineTorque
-        float maxEngineTorque = enginePowerTorqueCurve.Evaluate(rpm / maxRPM) * 600.0f;
+        // user sets a percentage of the maxEngineTorque
+        float maxEngineTorque = enginePowerTorqueCurve.Evaluate(rpm / maxRPM) * enginePower;
         engineTorque = input.userThrottle * maxEngineTorque;
 
         // TO-DO: calculate which gear to use
@@ -165,12 +166,14 @@ public class CarPhysicsController : MonoBehaviour
         frontLeftWheel.driveTorque = driveTorque / 4;
         frontRightWheel.driveTorque = driveTorque / 4;
         backLeftWheel.driveTorque = driveTorque / 4;
-        backRightWheel.driveTorque = driveTorque / 4;
+        backRightWheel.driveTorque = driveTorque / 4;        
 
-
-        
-
+        // transfer brake
         Vector3 brakeForce = -transform.forward * brakePower * input.userBrake;
+        frontLeftWheel.driveTorque = driveTorque / 4;
+        frontRightWheel.driveTorque = driveTorque / 4;
+        backLeftWheel.driveTorque = driveTorque / 4;
+        backRightWheel.driveTorque = driveTorque / 4;
 
         // Calculate air friction force
         float velocity = transform.InverseTransformDirection(mRigidbody.velocity).z;
@@ -183,7 +186,7 @@ public class CarPhysicsController : MonoBehaviour
         Vector3 frictionForces = dragForce + rollingForce;
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.up, out hit) && (hit.distance) < 1.7f) //if the wheels are touching the ground
+        if (Physics.Raycast(transform.position, -transform.up, out hit) && (hit.distance) < 1.7f) // if the wheels are touching the ground
         {
             mRigidbody.AddForce(frictionForces);
         }

@@ -87,7 +87,7 @@ public class WheelExperiment : MonoBehaviour
         Gizmos.DrawSphere(transform.position + new Vector3(0.0f, 1f, 0.0f), 0.2f);
     }
 
-        void FixedUpdate()
+    void FixedUpdate()
     {
         weightFactor = -((supportedWeight - meanWeightSupported) / meanWeightSupported) * 5.0f;
         if (weightFactor < -1) weightFactor = -1;
@@ -110,7 +110,7 @@ public class WheelExperiment : MonoBehaviour
 
         // Apply forces to the car
         
-        if (carLinearVelocity < 0.1f && brakeTorque > 0) // car stopped and brake an d throttle pressed
+        if (carLinearVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
         {
             tractionTorque = 0;
             slipRatio = 1;
