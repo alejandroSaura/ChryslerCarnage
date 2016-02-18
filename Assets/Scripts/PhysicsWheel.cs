@@ -10,6 +10,7 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve userThrottleWeight;
     public AnimationCurve slipBrakeCurve;
     public AnimationCurve userBrakeWeight;
+    public AnimationCurve lowSpeedLateralCompensation;
     public float directionDeviationCorrection = -0.01f;
 
     // exposed to be set by carController
@@ -24,12 +25,14 @@ public class PhysicsWheel : MonoBehaviour
     // debug
     public float latVelocity;
     public float wheelLinearVelocity;
-    public float carLinearVelocity;
+    public float tangentialVelocity;
     public float tractionFactor;
     public float weightFactor;
     public float slipRatio;
 
     Rigidbody mRigidbody;
+    Transform wheelGeometry;
+
     // User input object
     InputInterface input;
     
@@ -43,9 +46,11 @@ public class PhysicsWheel : MonoBehaviour
     Vector3 normal;
 
 
+
     void Start ()
     {
         mRigidbody = gameObject.GetComponent<Rigidbody>();
+        wheelGeometry = transform.FindChild("wheelGeometry");
 
         // Get user input object
         input = transform.parent.gameObject.GetComponent<InputInterface>();
@@ -65,11 +70,14 @@ public class PhysicsWheel : MonoBehaviour
 
     void FixedUpdate ()
     {
+        Vector3 velocity = mRigidbody.velocity;
+        tangentialVelocity = transform.InverseTransformDirection(velocity).z;
+        latVelocity = transform.InverseTransformDirection(velocity).y;
+
         weightFactor = -((supportedWeight - meanWeightSupported) / meanWeightSupported) * 5.0f;
         if (weightFactor < -1) weightFactor = -1;
 
         // get the slip ratio
-        carLinearVelocity = transform.parent.InverseTransformDirection(transform.parent.GetComponent<Rigidbody>().velocity).z;
         wheelLinearVelocity = angularVelocity * wheelRadius;
 
         // loss of traction. Depends on the supported weight and the velocity.
@@ -77,30 +85,37 @@ public class PhysicsWheel : MonoBehaviour
 
         //depends on traction and its own curve.
         slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * Mathf.Abs(1 - tractionFactor * 0.5f);
-        
+
+        // Rotate the geometry
+        angularVelocity = slipRatio * tangentialVelocity / wheelRadius;
+        //if (slipRatio < wheelsBlockFactor) angularVelocity = 0; // block the wheels
+
+        wheelGeometry.Rotate(0.0f, angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+
+        // Add forces:
+
         tractionTorque = tractionFactor * driveTorque;
-        tractionForce = (-tractionTorque / wheelRadius);
-       
+        tractionForce = (-tractionTorque / wheelRadius);       
 
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius) // if the wheel is touching the ground
         {
-            // Add forces:
+            
 
             // particular cases ----------------------------------------------
-            if (carLinearVelocity < 0.01f && brakeTorque > 0) // car stopped and brake and throttle pressed
+            if (tangentialVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
                 tractionTorque = 0;
                 slipRatio = 1;
             }
             if (driveTorque == 0) // No driveTorque applied
             {
-                angularVelocity = carLinearVelocity / wheelRadius;
+                angularVelocity = tangentialVelocity / wheelRadius;
             }
             //-----------------------------------------------------------------
 
             // brake
-            if (carLinearVelocity > 0.01f && brakeTorque > 0)
+            if (tangentialVelocity > 1f && brakeTorque > 0)
             {
                 mRigidbody.AddForce(-brakeTorque / wheelRadius * (1 - weightFactor) * transform.forward);
                 slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * -(weightFactor);
@@ -110,6 +125,7 @@ public class PhysicsWheel : MonoBehaviour
             }
 
             // accelerate 
+
             //float rotation = maxSteerAngle * (input.userLeftStickHorizontal); //add an offset to correct the deviation bug
             //Quaternion q = new Quaternion();
             //q.eulerAngles = new Vector3(0, rotation, 0);
@@ -119,35 +135,43 @@ public class PhysicsWheel : MonoBehaviour
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
 
-            Vector3 velocity = mRigidbody.velocity;
+            Debug.Log(velocity.magnitude);
 
             // lateral force
-            latVelocity = transform.InverseTransformDirection(velocity).y;
             Vector3 direction = Vector3.Cross(transform.forward, normal);
-
-            Vector3 lateralForce = 
+            Vector3 lateralForce =
                 (
-                (latVelocity * 1.5f) 
-                * (1 + mRigidbody.mass * 9.8f) 
-                * Mathf.Clamp(carLinearVelocity / 8, 1, float.MaxValue)                 
+                (1 + Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
+                * (mRigidbody.mass * 9.8f)
+                * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                 ) * direction;
 
-            if ((carLinearVelocity) > 0.1f)
+            if ((tangentialVelocity) > 2f)
             {
+                if ((tangentialVelocity) < 10f) // low speed turning
+                {
+                    mRigidbody.drag = 5;
+                    lateralForce *= 2;
+                }
                 mRigidbody.AddForceAtPosition(- lateralForce, transform.position);
                 Debug.DrawLine(transform.position, transform.position + -lateralForce);
             }
-            else if((carLinearVelocity) < -0.1f)
+            else if((tangentialVelocity) < -2f)
             {
+                if ((tangentialVelocity) > -10f) // low speed turning backwards
+                {
+                    mRigidbody.drag = 5;
+                    lateralForce *= 2;
+                }
                 mRigidbody.AddForceAtPosition(lateralForce, transform.position);
                 Debug.DrawLine(transform.position, transform.position + lateralForce);
             }
             else
             {
-                Vector3 v = mRigidbody.velocity;
-                v.x = 0;
-                mRigidbody.velocity = v;
+                // if the speed is too low just stop the car with Unity's drag
+                mRigidbody.drag = 20;
             }
+            if(driveTorque > 0) mRigidbody.drag = 0;
 
             slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
             tractionColor = new Vector4(1 - tractionFactor, 1 - tractionFactor, 1, 1);
