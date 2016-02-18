@@ -175,7 +175,8 @@ public class PhysicsWheel : MonoBehaviour
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * latForce_slipFactor 
                     * sideSlipAngleRatio
-                    *0.8f
+                    * latForce_velocityFactor * 0.95f
+                    *0.9f
                     );
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
