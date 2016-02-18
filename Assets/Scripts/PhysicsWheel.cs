@@ -163,7 +163,7 @@ public class PhysicsWheel : MonoBehaviour
 
             // force calculus
             Vector3 lateralForce = Vector3.zero;
-            if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 20)) // high speed turning
+            if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 10)) // high speed turning
             {                
                 //lateralForce = direction * sideSlipToForce.Evaluate(sideSlipAngle) * maxLateralForce;
 
@@ -175,13 +175,13 @@ public class PhysicsWheel : MonoBehaviour
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * latForce_slipFactor 
                     * sideSlipAngleRatio
-                    * latForce_velocityFactor * 0.95f
-                    *0.9f
+                    * latForce_velocityFactor
+                    
                     );
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
             }
-            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) < 20f) // low speed turning
+            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) < 10f) // low speed turning
             {
                 lateralForce =
                     (
