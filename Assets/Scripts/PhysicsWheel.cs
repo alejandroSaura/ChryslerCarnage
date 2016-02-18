@@ -173,8 +173,9 @@ public class PhysicsWheel : MonoBehaviour
                     //* (supportedWeight)
                     * mRigidbody.mass*9.8f
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
-                    * latForce_slipFactor *0.5f
+                    * latForce_slipFactor 
                     * sideSlipAngleRatio
+                    *0.8f
                     );
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
@@ -187,7 +188,7 @@ public class PhysicsWheel : MonoBehaviour
                     //* (supportedWeight)
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * mRigidbody.mass*9.8f
-                    * 2                    
+                    * 4                    
                     ) * direction;
 
                 mRigidbody.drag = 5;
@@ -196,7 +197,7 @@ public class PhysicsWheel : MonoBehaviour
             {
                 // if the speed is too low just stop the car with Unity's drag
                 lateralForce = Vector3.zero;
-                mRigidbody.drag = 20;
+                mRigidbody.drag = 40;
             }
 
             // Apply force
