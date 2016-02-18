@@ -4,6 +4,8 @@ using System.Collections;
 public class PhysicsWheel : MonoBehaviour
 {
     // parameters
+    public float inputSensitivity = 0.5f;
+    public float maxLateralForce = 1000;
     public float maxSteerAngle = 35;
     public AnimationCurve tractionCurve;
     public AnimationCurve slipCurve;
@@ -11,6 +13,11 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve slipBrakeCurve;
     public AnimationCurve userBrakeWeight;
     public AnimationCurve lowSpeedLateralCompensation;
+    public AnimationCurve velocityToSideSlip;
+    public AnimationCurve slipToSideSlip;
+    public AnimationCurve maxSteerAngleCurve;
+
+
     public float directionDeviationCorrection = -0.01f;
 
     // exposed to be set by carController
@@ -29,6 +36,9 @@ public class PhysicsWheel : MonoBehaviour
     public float tractionFactor;
     public float weightFactor;
     public float slipRatio;
+    public float latForce_velocityFactor;
+    public float sideSlipAngleRatio;
+    public float sideSlipAngle;
 
     Rigidbody mRigidbody;
     Transform wheelGeometry;
@@ -44,6 +54,9 @@ public class PhysicsWheel : MonoBehaviour
     Vector4 tractionColor;
 
     Vector3 normal;
+    Vector3 tangent;
+
+    float wheelSteerAngleTarget = 0;
 
 
 
@@ -132,59 +145,89 @@ public class PhysicsWheel : MonoBehaviour
             //q.eulerAngles = new Vector3(0, rotation, 0);
             //Vector3 headingDirection = q * transform.parent.forward;
 
-            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * transform.forward * 5, transform.position);
+            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * tangent * 5, transform.position);
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
+            // lateral force ---------------------------------------------------
 
-            Debug.Log(velocity.magnitude);
+            latForce_velocityFactor = velocityToSideSlip.Evaluate(velocity.magnitude); // speed penalizer
+            float latForce_slipFactor = slipToSideSlip.Evaluate(slipRatio); // tangentialSlip penalizer
+            //Debug.Log(velocity.magnitude);
+            Vector3 direction = Vector3.Cross(transform.forward, normal).normalized;
 
-            // lateral force
-            Vector3 direction = Vector3.Cross(transform.forward, normal);
-            Vector3 lateralForce =
-                (
-                (1 + Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
-                * (mRigidbody.mass * 9.8f)
-                * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
-                ) * direction;
+            sideSlipAngle = Vector3.Angle(transform.forward, velocity);
+            //if (sideSlipAngle > 180) sideSlipAngle = 360 - sideSlipAngle;
+            sideSlipAngleRatio = 1 - sideSlipAngle / 180;
+            //Debug.Log(sideSlipAngle);
 
-            if ((tangentialVelocity) > 2f)
-            {
-                if ((tangentialVelocity) < 10f) // low speed turning
-                {
-                    mRigidbody.drag = 5;
-                    lateralForce *= 5;
-                }
-                mRigidbody.AddForceAtPosition(- lateralForce, transform.position);
-                Debug.DrawLine(transform.position, transform.position + -lateralForce);
+
+            // force calculus
+            Vector3 lateralForce = Vector3.zero;
+            if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 20)) // high speed turning
+            {                
+                //lateralForce = direction * sideSlipToForce.Evaluate(sideSlipAngle) * maxLateralForce;
+
+                float maxLateralForce =
+                    (
+                    (Mathf.Abs(latVelocity) * Mathf.Sign(latVelocity))
+                    //* (supportedWeight)
+                    * mRigidbody.mass*9.8f
+                    * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
+                    * latForce_slipFactor *0.5f
+                    * sideSlipAngleRatio
+                    );
+
+                lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
             }
-            else if((tangentialVelocity) < -2f)
+            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) < 20f) // low speed turning
             {
-                if ((tangentialVelocity) > -10f) // low speed turning backwards
-                {
-                    mRigidbody.drag = 5;
-                    lateralForce *= 5;
-                }
-                mRigidbody.AddForceAtPosition(lateralForce, transform.position);
-                Debug.DrawLine(transform.position, transform.position + lateralForce);
+                lateralForce =
+                    (
+                    (1 + Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
+                    //* (supportedWeight)
+                    * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
+                    * mRigidbody.mass*9.8f
+                    * 2                    
+                    ) * direction;
+
+                mRigidbody.drag = 5;
             }
-            else
+            if (velocity.magnitude < 2)
             {
                 // if the speed is too low just stop the car with Unity's drag
+                lateralForce = Vector3.zero;
                 mRigidbody.drag = 20;
             }
-            if(driveTorque > 0) mRigidbody.drag = 0;
 
+            // Apply force
+            if ((tangentialVelocity) > 0f) // going forward
+            {                
+                mRigidbody.AddForceAtPosition(-lateralForce, transform.position);
+                Debug.DrawLine(transform.position, transform.position + -lateralForce);
+            }
+            else if((tangentialVelocity) < 0f) // backwards
+            {                
+                mRigidbody.AddForceAtPosition(-lateralForce, transform.position);
+                Debug.DrawLine(transform.position, transform.position + -lateralForce);
+            }
+           
+            if(driveTorque > 0) mRigidbody.drag = 0;
+            //-------------------------------------------------------------------
+
+            // debug
             slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
             tractionColor = new Vector4(1 - tractionFactor, 1 - tractionFactor, 1, 1);
         }
         // TO-DO: if not touching the ground set slipRatio to 1 and let the wheel spin freely.
 
         // Steer the wheel
+        maxSteerAngle = maxSteerAngleCurve.Evaluate(velocity.magnitude);
+        wheelSteerAngleTarget = maxSteerAngle * input.userLeftStickHorizontal;
         HingeJoint joint = gameObject.GetComponent<HingeJoint>();
         if (joint != null)
         {
             JointSpring spring = joint.spring;
-            spring.targetPosition = maxSteerAngle * input.userLeftStickHorizontal;
+            spring.targetPosition = Mathf.Lerp(spring.targetPosition, wheelSteerAngleTarget, Time.deltaTime*3);
             joint.spring = spring;
         }
 
@@ -198,6 +241,7 @@ public class PhysicsWheel : MonoBehaviour
             normal += contact.normal;
         }
         normal = (normal / collision.contacts.Length).normalized;
+        tangent = Vector3.Cross(normal, transform.up);
     }
 
 }
