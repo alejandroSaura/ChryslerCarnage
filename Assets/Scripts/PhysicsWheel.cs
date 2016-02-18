@@ -4,7 +4,7 @@ using System.Collections;
 public class PhysicsWheel : MonoBehaviour
 {
     // parameters
-    public float inputSensitivity = 0.5f;
+    public AnimationCurve inputSensitivityCurve;
     public float maxLateralForce = 1000;
     public float maxSteerAngle = 35;
     public AnimationCurve tractionCurve;
@@ -228,7 +228,7 @@ public class PhysicsWheel : MonoBehaviour
 
         // Steer the wheel
         maxSteerAngle = maxSteerAngleCurve.Evaluate(velocity.magnitude);
-        wheelSteerAngleTarget = maxSteerAngle * input.userLeftStickHorizontal;
+        wheelSteerAngleTarget = maxSteerAngle * input.userLeftStickHorizontal * inputSensitivityCurve.Evaluate(velocity.magnitude);
         HingeJoint joint = gameObject.GetComponent<HingeJoint>();
         if (joint != null)
         {
