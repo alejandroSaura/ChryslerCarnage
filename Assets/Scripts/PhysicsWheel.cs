@@ -40,6 +40,7 @@ public class PhysicsWheel : MonoBehaviour
     Vector4 slipColor;
     Vector4 tractionColor;
 
+    Vector3 normal;
 
 
     void Start ()
@@ -109,28 +110,37 @@ public class PhysicsWheel : MonoBehaviour
             }
 
             // accelerate 
-            float rotation = maxSteerAngle * (input.userLeftStickHorizontal); //add an offset to correct the deviation bug
-            Quaternion q = new Quaternion();
-            q.eulerAngles = new Vector3(0, rotation, 0);
-            Vector3 headingDirection = q * transform.parent.forward;
+            //float rotation = maxSteerAngle * (input.userLeftStickHorizontal); //add an offset to correct the deviation bug
+            //Quaternion q = new Quaternion();
+            //q.eulerAngles = new Vector3(0, rotation, 0);
+            //Vector3 headingDirection = q * transform.parent.forward;
 
-            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * headingDirection * 5, transform.position);
-            Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * headingDirection, Color.green);
+            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * transform.forward * 5, transform.position);
+            Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
 
             Vector3 velocity = mRigidbody.velocity;
 
             // lateral force
             latVelocity = transform.InverseTransformDirection(velocity).y;
+            Vector3 direction = Vector3.Cross(transform.forward, normal);
+
+            Vector3 lateralForce = 
+                (
+                (latVelocity * 1.5f) 
+                * (1 + mRigidbody.mass * 9.8f) 
+                * Mathf.Clamp(carLinearVelocity / 8, 1, float.MaxValue)                 
+                ) * direction;
+
             if ((carLinearVelocity) > 0.1f)
             {
-                mRigidbody.AddForceAtPosition(-(latVelocity) * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity/5) , transform.position);
-                Debug.DrawLine(transform.position, transform.position + -latVelocity * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5));
+                mRigidbody.AddForceAtPosition(- lateralForce, transform.position);
+                Debug.DrawLine(transform.position, transform.position + -lateralForce);
             }
             else if((carLinearVelocity) < -0.1f)
             {
-                mRigidbody.AddForceAtPosition((latVelocity) * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5), transform.position);
-                Debug.DrawLine(transform.position, transform.position + -latVelocity * -transform.parent.right * (1 + mRigidbody.mass * 9.8f) * (carLinearVelocity / 5));
+                mRigidbody.AddForceAtPosition(lateralForce, transform.position);
+                Debug.DrawLine(transform.position, transform.position + lateralForce);
             }
             else
             {
@@ -154,4 +164,15 @@ public class PhysicsWheel : MonoBehaviour
         }
 
     }
+
+    void OnCollisionStay(Collision collision)
+    {
+        normal = Vector3.zero;
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            normal += contact.normal;
+        }
+        normal = (normal / collision.contacts.Length).normalized;
+    }
+
 }
