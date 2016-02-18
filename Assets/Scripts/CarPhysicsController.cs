@@ -123,13 +123,13 @@ public class CarPhysicsController : MonoBehaviour
         float distanceToRear = (CenterOfMassAligned - RearAxisAligned).magnitude;
         float wheelBase = (FrontAxisAligned - RearAxisAligned).magnitude;
 
-        Vector3 acceleration = transform.InverseTransformDirection((mRigidbody.velocity - lastVelocity)/Time.deltaTime);
+        Vector3 acceleration = Vector3.ClampMagnitude(transform.InverseTransformDirection((mRigidbody.velocity - lastVelocity)/Time.deltaTime),100);
         
         float tangentialAcceleration = acceleration.z;
         float normalAcceleration = acceleration.x;
 
-        frontWeight = (distanceToRear / wheelBase) * mRigidbody.mass * Physics.gravity.y + (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
-        rearWeight = (distanceToFront / wheelBase) * mRigidbody.mass * Physics.gravity.y - (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
+        frontWeight = (distanceToRear / wheelBase) * mRigidbody.mass * Physics.gravity.y - (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
+        rearWeight = (distanceToFront / wheelBase) * mRigidbody.mass * Physics.gravity.y + (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
 
         float lateralWeightTransfer = normalAcceleration / Physics.gravity.y * mRigidbody.mass * centerOfMass.y / distanceBetweenWheels;
         rightWeight = 0.5f * mRigidbody.mass * Physics.gravity.y + lateralWeightTransfer;
@@ -144,14 +144,14 @@ public class CarPhysicsController : MonoBehaviour
         float rightWeightPercent = Mathf.Clamp01(rightWeight / normalWeight);
         float leftWeightPercent = Mathf.Clamp01(leftWeight / normalWeight);
 
-        weightPosition = FrontAxis.localPosition * frontWeightPercent + RearAxis.localPosition * rearWeightPercent;        
-        weightPosition += transform.right * (distanceBetweenWheels*0.5f) * (rightWeightPercent) - transform.right * (distanceBetweenWheels * 0.5f) * (leftWeightPercent);
+        weightPosition = (FrontAxis.localPosition * frontWeightPercent + RearAxis.localPosition * rearWeightPercent);        
+        weightPosition += ((distanceBetweenWheels) * (rightWeightPercent) - (distanceBetweenWheels) * (leftWeightPercent)) * new Vector3(1,0,0) * 5;
 
         // transfer the weight to the wheels
-        frontLeftWheel.supportedWeight = frontWeight / 2 ;
-        frontRightWheel.supportedWeight = frontWeight / 2 ;
-        backLeftWheel.supportedWeight = rearWeight / 2 ;
-        backRightWheel.supportedWeight = rearWeight / 2 ;
+        frontLeftWheel.supportedWeight = (frontWeightPercent + leftWeightPercent)/2;
+        frontRightWheel.supportedWeight = (frontWeightPercent + rightWeightPercent)/2;
+        backLeftWheel.supportedWeight = (rearWeightPercent + leftWeightPercent)/2;
+        backRightWheel.supportedWeight = (rearWeightPercent + rightWeightPercent)/2;
 
         //---------------------------------------------------------------------
 
