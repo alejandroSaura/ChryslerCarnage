@@ -98,7 +98,8 @@ public class PhysicsWheel : MonoBehaviour
         tractionForce = (-tractionTorque / wheelRadius);       
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius) // if the wheel is touching the ground
+        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius // if the wheel is touching the ground
+            && Vector3.Angle(transform.right, -normal)>120) //and the angle of collision is reasonable
         {
             
 
@@ -151,7 +152,7 @@ public class PhysicsWheel : MonoBehaviour
                 if ((tangentialVelocity) < 10f) // low speed turning
                 {
                     mRigidbody.drag = 5;
-                    lateralForce *= 2;
+                    lateralForce *= 5;
                 }
                 mRigidbody.AddForceAtPosition(- lateralForce, transform.position);
                 Debug.DrawLine(transform.position, transform.position + -lateralForce);
@@ -161,7 +162,7 @@ public class PhysicsWheel : MonoBehaviour
                 if ((tangentialVelocity) > -10f) // low speed turning backwards
                 {
                     mRigidbody.drag = 5;
-                    lateralForce *= 2;
+                    lateralForce *= 5;
                 }
                 mRigidbody.AddForceAtPosition(lateralForce, transform.position);
                 Debug.DrawLine(transform.position, transform.position + lateralForce);
