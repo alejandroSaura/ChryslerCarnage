@@ -176,7 +176,7 @@ public class PhysicsWheel : MonoBehaviour
                     * latForce_slipFactor 
                     * sideSlipAngleRatio
                     * latForce_velocityFactor
-                    
+                    * 0.8f
                     );
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
