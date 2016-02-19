@@ -212,7 +212,7 @@ public class CarPhysicsController : MonoBehaviour
              appropriateGear = currentGear;
              for (int i=0;i<gears.Length;i++)
             {
-                if((backLeftWheel.angularVelocity * gears[i] < maxRPM)||(backRightWheel.angularVelocity * gearRatio[i] < maxRPM))
+                if((backLeftWheel.angularVelocity * gears[i] < maxRPM)||(backRightWheel.angularVelocity * gears[i] < maxRPM))
                {
                     appropriateGear = i;
                     break;
