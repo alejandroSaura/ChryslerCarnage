@@ -3,6 +3,11 @@ using System.Collections;
 
 public class CarPhysicsController : MonoBehaviour
 {
+    //Gears parameters
+    public int[] gears;
+    public int currentGear = 0;
+    public float currentEngineRPM;
+    public int appropriateGear;
     // Parameters ----------------------------------------------------
 
     public AnimationCurve enginePowerTorqueCurve;
@@ -103,13 +108,14 @@ public class CarPhysicsController : MonoBehaviour
         
     }
 
-    void Update ()
-    {
-        
-    }
 
     void FixedUpdate ()
     {
+        //gear ratio calculations
+        currentEngineRPM = (frontLeftWheel.angularVelocity+frontRightWheel.angularVelocity+backLeftWheel.angularVelocity+backRightWheel.angularVelocity)/2 * gears[currentGear];
+        shiftGear();
+
+
         // calculate weight dynamic transfer ----------------------
 
         Vector3 CenterOfMassAligned = centerOfMass; // put the three objects in the same plane (y=0)
@@ -123,13 +129,13 @@ public class CarPhysicsController : MonoBehaviour
         float distanceToRear = (CenterOfMassAligned - RearAxisAligned).magnitude;
         float wheelBase = (FrontAxisAligned - RearAxisAligned).magnitude;
 
-        Vector3 acceleration = transform.InverseTransformDirection((mRigidbody.velocity - lastVelocity)/Time.deltaTime);
+        Vector3 acceleration = Vector3.ClampMagnitude(transform.InverseTransformDirection((mRigidbody.velocity - lastVelocity)/Time.deltaTime),100);
         
         float tangentialAcceleration = acceleration.z;
         float normalAcceleration = acceleration.x;
 
-        frontWeight = (distanceToRear / wheelBase) * mRigidbody.mass * Physics.gravity.y + (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
-        rearWeight = (distanceToFront / wheelBase) * mRigidbody.mass * Physics.gravity.y - (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
+        frontWeight = (distanceToRear / wheelBase) * mRigidbody.mass * Physics.gravity.y - (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
+        rearWeight = (distanceToFront / wheelBase) * mRigidbody.mass * Physics.gravity.y + (centerOfMass.y / wheelBase) * mRigidbody.mass * tangentialAcceleration;
 
         float lateralWeightTransfer = normalAcceleration / Physics.gravity.y * mRigidbody.mass * centerOfMass.y / distanceBetweenWheels;
         rightWeight = 0.5f * mRigidbody.mass * Physics.gravity.y + lateralWeightTransfer;
@@ -144,14 +150,14 @@ public class CarPhysicsController : MonoBehaviour
         float rightWeightPercent = Mathf.Clamp01(rightWeight / normalWeight);
         float leftWeightPercent = Mathf.Clamp01(leftWeight / normalWeight);
 
-        weightPosition = FrontAxis.localPosition * frontWeightPercent + RearAxis.localPosition * rearWeightPercent;        
-        weightPosition += transform.right * (distanceBetweenWheels*0.5f) * (rightWeightPercent) - transform.right * (distanceBetweenWheels * 0.5f) * (leftWeightPercent);
+        weightPosition = (FrontAxis.localPosition * frontWeightPercent + RearAxis.localPosition * rearWeightPercent);        
+        weightPosition += ((distanceBetweenWheels) * (rightWeightPercent) - (distanceBetweenWheels) * (leftWeightPercent)) * new Vector3(1,0,0) * 5;
 
         // transfer the weight to the wheels
-        frontLeftWheel.supportedWeight = frontWeight / 2 ;
-        frontRightWheel.supportedWeight = frontWeight / 2 ;
-        backLeftWheel.supportedWeight = rearWeight / 2 ;
-        backRightWheel.supportedWeight = rearWeight / 2 ;
+        frontLeftWheel.supportedWeight = (frontWeightPercent + leftWeightPercent)/2;
+        frontRightWheel.supportedWeight = (frontWeightPercent + rightWeightPercent)/2;
+        backLeftWheel.supportedWeight = (rearWeightPercent + leftWeightPercent)/2;
+        backRightWheel.supportedWeight = (rearWeightPercent + rightWeightPercent)/2;
 
         //---------------------------------------------------------------------
 
@@ -198,5 +204,34 @@ public class CarPhysicsController : MonoBehaviour
         }
 
         lastVelocity = mRigidbody.velocity;        
+    }
+    void shiftGear()
+    {
+        if (currentEngineRPM >= maxRPM)
+        {
+             appropriateGear = currentGear;
+             for (int i=0;i<gears.Length;i++)
+            {
+                if((backLeftWheel.angularVelocity * gears[i] < maxRPM)||(backRightWheel.angularVelocity * gears[i] < maxRPM))
+               {
+                    appropriateGear = i;
+                    break;
+               }
+            }
+            currentGear = appropriateGear;
+        }
+        if (currentEngineRPM<= minRPM)
+        {
+            appropriateGear = currentGear;
+            for (int j=gears.Length-1;j>=0;j--)
+            {
+                if((backLeftWheel.angularVelocity * gears[j] > minRPM)||(backRightWheel.angularVelocity * gears[j] < minRPM))
+                {
+                    appropriateGear = j;
+                    break;
+                }
+            }
+            currentGear = appropriateGear;
+        }
     }
 }

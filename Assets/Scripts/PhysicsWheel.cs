@@ -87,23 +87,27 @@ public class PhysicsWheel : MonoBehaviour
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
 
-        weightFactor = -((supportedWeight - meanWeightSupported) / meanWeightSupported) * 5.0f;
-        if (weightFactor < -1) weightFactor = -1;
+        //weightFactor = -((supportedWeight - meanWeightSupported) / meanWeightSupported) * 5.0f;
+        //if (weightFactor < -1) weightFactor = -1;
+
+        weightFactor = (supportedWeight-0.4f)/0.2f;
+        Mathf.Clamp01(weightFactor);
 
         // get the slip ratio
         wheelLinearVelocity = angularVelocity * wheelRadius;
 
         // loss of traction. Depends on the supported weight and the velocity.
-        tractionFactor = (1 - tractionCurve.Evaluate(angularVelocity)) * (1 - weightFactor);
+        //tractionFactor = 1 - (tractionCurve.Evaluate(angularVelocity)) * (1-weightFactor);
+        tractionFactor = (weightFactor);
 
         //depends on traction and its own curve.
-        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * Mathf.Abs(1 - tractionFactor * 0.5f);
+        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1-tractionFactor);
 
         // Rotate the geometry
         angularVelocity = slipRatio * tangentialVelocity / wheelRadius;
         //if (slipRatio < wheelsBlockFactor) angularVelocity = 0; // block the wheels
 
-        wheelGeometry.Rotate(0.0f, angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+        wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
 
         // Add forces:
 
@@ -131,7 +135,7 @@ public class PhysicsWheel : MonoBehaviour
             // brake
             if (tangentialVelocity > 1f && brakeTorque > 0)
             {
-                mRigidbody.AddForce(-brakeTorque / wheelRadius * (1 - weightFactor) * transform.forward);
+                mRigidbody.AddForce(-brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward);
                 slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * -(weightFactor);
                 if (slipRatio > 1) slipRatio = 1; // we dont want the wheel to be spinning faster than the velocity of the ground when braking    
 
@@ -145,7 +149,7 @@ public class PhysicsWheel : MonoBehaviour
             //q.eulerAngles = new Vector3(0, rotation, 0);
             //Vector3 headingDirection = q * transform.parent.forward;
 
-            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * tangent * 5, transform.position);
+            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * tangent * /*5*/10, transform.position);
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
             // lateral force ---------------------------------------------------
@@ -163,7 +167,7 @@ public class PhysicsWheel : MonoBehaviour
 
             // force calculus
             Vector3 lateralForce = Vector3.zero;
-            if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 20)) // high speed turning
+            if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 10)) // high speed turning
             {                
                 //lateralForce = direction * sideSlipToForce.Evaluate(sideSlipAngle) * maxLateralForce;
 
@@ -173,13 +177,15 @@ public class PhysicsWheel : MonoBehaviour
                     //* (supportedWeight)
                     * mRigidbody.mass*9.8f
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
-                    * latForce_slipFactor *0.5f
+                    * latForce_slipFactor 
                     * sideSlipAngleRatio
+                    * latForce_velocityFactor
+                    * 0.8f
                     );
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
             }
-            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) < 20f) // low speed turning
+            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) < 10f) // low speed turning
             {
                 lateralForce =
                     (
@@ -187,7 +193,7 @@ public class PhysicsWheel : MonoBehaviour
                     //* (supportedWeight)
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * mRigidbody.mass*9.8f
-                    * 2                    
+                    * 4                    
                     ) * direction;
 
                 mRigidbody.drag = 5;
@@ -196,7 +202,7 @@ public class PhysicsWheel : MonoBehaviour
             {
                 // if the speed is too low just stop the car with Unity's drag
                 lateralForce = Vector3.zero;
-                mRigidbody.drag = 20;
+                mRigidbody.drag = 40;
             }
 
             // Apply force
