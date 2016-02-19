@@ -82,8 +82,8 @@ public class CarPhysicsController : MonoBehaviour
 
 
         distanceBetweenWheels = (transform.parent.FindChild("FrontLeftWheel").position - transform.parent.FindChild("FrontRightWheel").position).magnitude;
-
-        gearRatio = gearRatios[1]; // first gear
+        gearRatio = currentGear;
+       // gearRatio = gearRatios[1]; // first gear
     }
 
     void OnDrawGizmos()
@@ -112,7 +112,7 @@ public class CarPhysicsController : MonoBehaviour
     void FixedUpdate ()
     {
         //gear ratio calculations
-        //currentEngineRPM = (frontLeftWheel.angularVelocity+frontRightWheel.angularVelocity+backLeftWheel.angularVelocity+backRightWheel.angularVelocity)/2 * gears[currentGear];
+       // currentEngineRPM = (frontLeftWheel.angularVelocity+frontRightWheel.angularVelocity+backLeftWheel.angularVelocity+backRightWheel.angularVelocity)/2 * gears[currentGear];
         //shiftGear();
 
 
@@ -212,7 +212,7 @@ public class CarPhysicsController : MonoBehaviour
              appropriateGear = currentGear;
              for (int i=0;i<gears.Length;i++)
             {
-                if((backLeftWheel.angularVelocity * gears[i] < maxRPM)||(backRightWheel.angularVelocity * gears[i] < maxRPM))
+                if((backLeftWheel.angularVelocity * gears[i] < maxRPM)||(backRightWheel.angularVelocity * gearRatio[i] < maxRPM))
                {
                     appropriateGear = i;
                     break;
