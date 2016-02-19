@@ -112,8 +112,8 @@ public class CarPhysicsController : MonoBehaviour
     void FixedUpdate ()
     {
         //gear ratio calculations
-        currentEngineRPM = (frontLeftWheel.angularVelocity+frontRightWheel.angularVelocity+backLeftWheel.angularVelocity+backRightWheel.angularVelocity)/2 * gears[currentGear];
-        shiftGear();
+        //currentEngineRPM = (frontLeftWheel.angularVelocity+frontRightWheel.angularVelocity+backLeftWheel.angularVelocity+backRightWheel.angularVelocity)/2 * gears[currentGear];
+        //shiftGear();
 
 
         // calculate weight dynamic transfer ----------------------
