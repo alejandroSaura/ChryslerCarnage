@@ -3,11 +3,6 @@ using System.Collections;
 
 public class CarPhysicsController : MonoBehaviour
 {
-    //Gears parameters
-    public int[] gears;
-    public int currentGear = 0;
-    public float currentEngineRPM;
-    public int appropriateGear;
     // Parameters ----------------------------------------------------
 
     public AnimationCurve enginePowerTorqueCurve;
@@ -21,15 +16,17 @@ public class CarPhysicsController : MonoBehaviour
     public float transmissionEfficiency = 0.7f; // guess
 
     public float minRPM = 1000.0f;
-    public float maxRPM = 6000.0f;
-
+    public float maxRPM = 13000.0f;
+    public float[][] gearThresholds;
     public float[] gearRatios = { 2.9f, 2.66f, 1.78f, 1.3f, 1.0f, 0.74f, 0.5f }; // 0 = reverse
 
     // member variables ----------------------------------------------
-
-    float gearRatio;
-    float rpm;
+    float engineRPM;
+    float currentGearRatio;
+    float rawEngineRPM;
     float engineTorque;
+    public int currentGear = 0;
+    public int appropriateGear;
 
     Rigidbody mRigidbody;
     Vector3 centerOfMass;
@@ -59,6 +56,29 @@ public class CarPhysicsController : MonoBehaviour
 
     void Start ()
     {
+
+        //gear thresholds
+        gearThresholds = new float[7][];
+        gearThresholds[1] = new float[2];
+        gearThresholds[1][0] = 1000;
+        gearThresholds[1][1] = 1200;
+        gearThresholds[2] = new float[2];
+        gearThresholds[2][0] = 1100;
+        gearThresholds[2][1] = 2500;
+        gearThresholds[3] = new float[2];
+        gearThresholds[3][0] = 2300;
+        gearThresholds[3][1] = 3100;
+        gearThresholds[4] = new float[2];
+        gearThresholds[4][0] = 2900;
+        gearThresholds[4][1] = 3500;
+        gearThresholds[5] = new float[2];
+        gearThresholds[5][0] = 3300;
+        gearThresholds[5][1] = 3800;
+        gearThresholds[6] = new float[2];
+        gearThresholds[6][0] = 3600;
+        gearThresholds[6][1] = 4000;
+
+
         // Get user input object
         input = transform.parent.gameObject.GetComponent<InputInterface>();
 
@@ -82,8 +102,9 @@ public class CarPhysicsController : MonoBehaviour
 
 
         distanceBetweenWheels = (transform.parent.FindChild("FrontLeftWheel").position - transform.parent.FindChild("FrontRightWheel").position).magnitude;
-        gearRatio = currentGear;
-       // gearRatio = gearRatios[1]; // first gear
+
+        currentGear = 1;
+        currentGearRatio = gearRatios[1]; // first gear
     }
 
     void OnDrawGizmos()
@@ -104,18 +125,18 @@ public class CarPhysicsController : MonoBehaviour
         float tangentialAcceleration = acceleration.z;
         GUI.TextArea(new Rect(15, 60, 290, 20), "Forward acceleration = " + tangentialAcceleration + " m/s^2");
 
-        GUI.TextArea(new Rect(15, 90, 290, 20), "RPM = " + rpm);
-        
+        GUI.TextArea(new Rect(15, 90, 290, 20), "engineRPM = " + engineRPM);
+        GUI.TextArea(new Rect(15, 120, 290, 20), "rawEngineRPM = " + rawEngineRPM);
+        GUI.TextArea(new Rect(15, 150, 290, 20), "Current Gear= " + currentGear);
+
+
     }
 
 
     void FixedUpdate ()
     {
-        //gear ratio calculations
-       // currentEngineRPM = (frontLeftWheel.angularVelocity+frontRightWheel.angularVelocity+backLeftWheel.angularVelocity+backRightWheel.angularVelocity)/2 * gears[currentGear];
-        //shiftGear();
 
-
+       
         // calculate weight dynamic transfer ----------------------
 
         Vector3 CenterOfMassAligned = centerOfMass; // put the three objects in the same plane (y=0)
@@ -162,18 +183,26 @@ public class CarPhysicsController : MonoBehaviour
         //---------------------------------------------------------------------
 
         // rpm calculus from wheels angular velocity
-        float maxAngularVel = Mathf.Max(backLeftWheel.angularVelocity, backRightWheel.angularVelocity, frontLeftWheel.angularVelocity, frontRightWheel.angularVelocity);
-        rpm = maxAngularVel * gearRatio * differentialRatio * 60.0f / (2.0f * Mathf.PI);
-        if (rpm < minRPM) rpm = minRPM; // don't let the engine go under the minimun rpm
+        float meanAngularVel = (frontLeftWheel.angularVelocity + frontRightWheel.angularVelocity + backLeftWheel.angularVelocity + backRightWheel.angularVelocity) / 4;
+        rawEngineRPM = meanAngularVel * gearRatios[1] * differentialRatio * 60.0f / (2.0f * Mathf.PI);
+        //rawEngineRPM = Mathf.Clamp(rawEngineRPM, minRPM, maxRPM); // don't let the engine go under the minimun rpm
+
+
+       // rawEngineRPM = (frontLeftWheel.angularVelocity + frontRightWheel.angularVelocity + backLeftWheel.angularVelocity + backRightWheel.angularVelocity) / 4 * gearRatios[currentGear];
+        //currentEngineRPM =
+        shiftGear();
+        //currentGearRatio = currentGear;
+        //Debug.Log(currentGearRatio);
+        //Debug.Log(rawEngineRPM);
 
         // user sets a percentage of the maxEngineTorque
-        float maxEngineTorque = enginePowerTorqueCurve.Evaluate(rpm / maxRPM) * enginePower;
+        float maxEngineTorque = enginePowerTorqueCurve.Evaluate(rawEngineRPM / maxRPM) * enginePower;
         engineTorque = input.userThrottle * maxEngineTorque;
 
         // TO-DO: calculate which gear to use
-        gearRatio = gearRatios[1]; // first gear
-        float driveTorque = engineTorque * gearRatio * differentialRatio * transmissionEfficiency; // / wheelRadius;
-
+        //currentGearRatio = gearRatios[1]; // first gear
+        //float driveTorque = engineTorque * currentGearRatio * differentialRatio * transmissionEfficiency; // / wheelRadius;
+        float driveTorque = engineTorque * gearRatios[currentGear] * differentialRatio * transmissionEfficiency; // / wheelRadius;
         // transfer driveTorque to the wheels, they will apply the force (if not sliding)
         frontLeftWheel.driveTorque = driveTorque / 4;
         frontRightWheel.driveTorque = driveTorque / 4;
@@ -207,31 +236,151 @@ public class CarPhysicsController : MonoBehaviour
     }
     void shiftGear()
     {
-        if (currentEngineRPM >= maxRPM)
+        switch (currentGear)
         {
-             appropriateGear = currentGear;
-             for (int i=0;i<gears.Length;i++)
-            {
-                if((backLeftWheel.angularVelocity * gears[i] < maxRPM)||(backRightWheel.angularVelocity * gears[i] < maxRPM))
-               {
-                    appropriateGear = i;
-                    break;
-               }
-            }
-            currentGear = appropriateGear;
-        }
-        if (currentEngineRPM<= minRPM)
-        {
-            appropriateGear = currentGear;
-            for (int j=gears.Length-1;j>=0;j--)
-            {
-                if((backLeftWheel.angularVelocity * gears[j] > minRPM)||(backRightWheel.angularVelocity * gears[j] < minRPM))
+            case 0:
+
+                break;
+            case 1:
+                engineRPM = rawEngineRPM;
+                currentGearRatio = gearRatios[1];
+                if (rawEngineRPM > gearThresholds[1][1])
                 {
-                    appropriateGear = j;
-                    break;
+                    currentGear = 2;
                 }
-            }
-            currentGear = appropriateGear;
+                    break;
+            case 2:
+                engineRPM = rawEngineRPM;
+                currentGearRatio = gearRatios[2];
+                if (rawEngineRPM > gearThresholds[2][1])
+                {
+                    currentGear = 3;
+                }
+                if (rawEngineRPM < gearThresholds[2][0])
+                {
+                    currentGear = 1;
+                }
+                break;
+            case 3:
+                engineRPM = rawEngineRPM;
+                currentGearRatio = gearRatios[3];
+                if (rawEngineRPM > gearThresholds[3][1])
+                {
+                    currentGear = 4;
+                }
+                if (rawEngineRPM < gearThresholds[3][0])
+                {
+                    currentGear = 2;
+                }
+                break;
+            case 4:
+                engineRPM = rawEngineRPM;
+                currentGearRatio = gearRatios[4];
+                if (rawEngineRPM > gearThresholds[4][1])
+                {
+                    currentGear = 5;
+                }
+                if (rawEngineRPM < gearThresholds[4][0])
+                {
+                    currentGear = 3;
+                }
+                break;
+            case 5:
+                engineRPM = rawEngineRPM;
+                currentGearRatio = gearRatios[5];
+                if (rawEngineRPM > gearThresholds[5][1])
+                {
+                    currentGear = 6;
+                }
+                if (rawEngineRPM < gearThresholds[5][0])
+                {
+                    currentGear = 4;
+                }
+                break;
+            //case 6:
+            //    engineRPM = rawEngineRPM;
+            //    currentGearRatio = gearRatios[3];
+            //    if (rawEngineRPM > gearThresholds[4][1])
+            //    {
+            //        currentGear = 5;
+            //    }
+            //    if (rawEngineRPM < gearThresholds[4][0])
+            //    {
+            //        currentGear = 3;
+            //    }
+            //    break;
         }
+
+
+    //    if (rawEngineRPM < gearThresholds[1][1])
+    //    {
+    //        engineRPM = rawEngineRPM;
+    //        currentGear = 1;
+    //        currentGearRatio = gearRatios[1];
+    //    }
+    //    else if (rawEngineRPM < gearThresholds[2][1])
+    //    {
+    //        engineRPM = rawEngineRPM - 2000;
+    //        currentGear = 2;
+    //        currentGearRatio = gearRatios[2];
+    //        if(engineRPM <= gearThresholds[1][0])
+    //        {
+    //            currentGear = 1;
+    //            currentGearRatio = gearRatios[1];
+    //        }
+    //    }
+    //    else if (rawEngineRPM < 7000)
+    //    {
+    //        engineRPM = rawEngineRPM - 4000;
+    //        currentGear = 3;
+    //        currentGearRatio = gearRatios[3];
+    //    }
+    //    else if (rawEngineRPM < 9000)
+    //    {
+    //        engineRPM = rawEngineRPM - 6000;
+    //        currentGear = 4;
+    //        currentGearRatio = gearRatios[4];
+    //    }
+    //    else if (rawEngineRPM < 11000)
+    //    {
+    //        engineRPM = rawEngineRPM - 8000;
+    //        currentGear = 5;
+    //        currentGearRatio = gearRatios[5];
+    //    }
+    //    else if (rawEngineRPM < 13000)
+    //    {
+    //        engineRPM = rawEngineRPM - 10000;
+    //        currentGear = 6;
+    //        currentGearRatio = gearRatios[6];
+    //    }
     }
+        //if (engineRPM >= maxRPM)
+        //{
+        //    appropriateGear = currentGear;
+        //    for (int i = 0; i < gears.Length; i++)
+        //    {
+        //        if ((backLeftWheel.angularVelocity * gearRatios[i] < maxRPM) || (backRightWheel.angularVelocity * gearRatios[i] < maxRPM) ||
+        //            (frontLeftWheel.angularVelocity * gearRatios[i] < maxRPM) || (frontRightWheel.angularVelocity * gearRatios[i] < maxRPM))
+        //        {
+        //            appropriateGear = i;
+        //            break;
+        //        }
+        //    }
+        //    currentGear = appropriateGear;
+        //}
+        //if (engineRPM <= minRPM)
+        //{
+        //    appropriateGear = currentGear;
+        //    for (int j = gears.Length - 1; j >= 0; j--)
+        //    {
+        //        if ((backLeftWheel.angularVelocity * gearRatios[j] > minRPM) || (backRightWheel.angularVelocity * gearRatios[j] > minRPM)
+        //            || (frontLeftWheel.angularVelocity * gearRatios[j] > minRPM) || (frontRightWheel.angularVelocity * gearRatios[j] > minRPM))
+        //        {
+        //            appropriateGear = j;
+        //            break;
+        //        }
+        //    }
+        //    currentGear = appropriateGear;
+        //}
+    //}
 }

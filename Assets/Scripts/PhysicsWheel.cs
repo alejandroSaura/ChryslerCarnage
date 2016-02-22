@@ -104,7 +104,7 @@ public class PhysicsWheel : MonoBehaviour
         slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1-tractionFactor);
 
         // Rotate the geometry
-        angularVelocity = slipRatio * tangentialVelocity / wheelRadius;
+        angularVelocity = 1 + slipRatio * tangentialVelocity / wheelRadius;
         //if (slipRatio < wheelsBlockFactor) angularVelocity = 0; // block the wheels
 
         wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
