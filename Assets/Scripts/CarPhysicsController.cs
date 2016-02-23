@@ -28,6 +28,10 @@ public class CarPhysicsController : MonoBehaviour
     public int currentGear = 0;
     public int appropriateGear;
 
+    public bool gearShift = false;
+    public float noiseRPM;
+    public float rpmResetter;
+
     Rigidbody mRigidbody;
     Vector3 centerOfMass;
 
@@ -128,7 +132,7 @@ public class CarPhysicsController : MonoBehaviour
         GUI.TextArea(new Rect(15, 90, 290, 20), "engineRPM = " + engineRPM);
         GUI.TextArea(new Rect(15, 120, 290, 20), "rawEngineRPM = " + rawEngineRPM);
         GUI.TextArea(new Rect(15, 150, 290, 20), "Current Gear= " + currentGear);
-
+        GUI.TextArea(new Rect(15, 180, 290, 20), "False RPM= " + noiseRPM);
 
     }
 
@@ -188,7 +192,16 @@ public class CarPhysicsController : MonoBehaviour
         //rawEngineRPM = Mathf.Clamp(rawEngineRPM, minRPM, maxRPM); // don't let the engine go under the minimun rpm
 
 
-       // rawEngineRPM = (frontLeftWheel.angularVelocity + frontRightWheel.angularVelocity + backLeftWheel.angularVelocity + backRightWheel.angularVelocity) / 4 * gearRatios[currentGear];
+        //TODO: Fix RPM resetter (sort of working)
+        //False RPM
+        noiseRPM = rawEngineRPM-rpmResetter;
+        if(noiseRPM < 0)
+        {
+            noiseRPM = 0;
+        }
+        shiftedGearAudio();
+
+        // rawEngineRPM = (frontLeftWheel.angularVelocity + frontRightWheel.angularVelocity + backLeftWheel.angularVelocity + backRightWheel.angularVelocity) / 4 * gearRatios[currentGear];
         //currentEngineRPM =
         shiftGear();
         //currentGearRatio = currentGear;
@@ -234,6 +247,18 @@ public class CarPhysicsController : MonoBehaviour
 
         lastVelocity = mRigidbody.velocity;        
     }
+
+    //false RPM function counter /w resetter.
+    void shiftedGearAudio()
+    {
+        if (gearShift == true)
+        {
+            rpmResetter = rawEngineRPM;
+            noiseRPM = 0;
+            gearShift = false;
+        }
+    }
+
     void shiftGear()
     {
         switch (currentGear)
@@ -246,6 +271,7 @@ public class CarPhysicsController : MonoBehaviour
                 currentGearRatio = gearRatios[1];
                 if (rawEngineRPM > gearThresholds[1][1])
                 {
+                    gearShift = true;
                     currentGear = 2;
                 }
                     break;
@@ -254,10 +280,12 @@ public class CarPhysicsController : MonoBehaviour
                 currentGearRatio = gearRatios[2];
                 if (rawEngineRPM > gearThresholds[2][1])
                 {
+                    gearShift = true;
                     currentGear = 3;
                 }
                 if (rawEngineRPM < gearThresholds[2][0])
                 {
+                    gearShift = true;
                     currentGear = 1;
                 }
                 break;
@@ -266,10 +294,12 @@ public class CarPhysicsController : MonoBehaviour
                 currentGearRatio = gearRatios[3];
                 if (rawEngineRPM > gearThresholds[3][1])
                 {
+                    gearShift = true;
                     currentGear = 4;
                 }
                 if (rawEngineRPM < gearThresholds[3][0])
                 {
+                    gearShift = true;
                     currentGear = 2;
                 }
                 break;
@@ -278,10 +308,12 @@ public class CarPhysicsController : MonoBehaviour
                 currentGearRatio = gearRatios[4];
                 if (rawEngineRPM > gearThresholds[4][1])
                 {
+                    gearShift = true;
                     currentGear = 5;
                 }
                 if (rawEngineRPM < gearThresholds[4][0])
                 {
+                    gearShift = true;
                     currentGear = 3;
                 }
                 break;
@@ -290,10 +322,12 @@ public class CarPhysicsController : MonoBehaviour
                 currentGearRatio = gearRatios[5];
                 if (rawEngineRPM > gearThresholds[5][1])
                 {
+                    gearShift = true;
                     currentGear = 6;
                 }
                 if (rawEngineRPM < gearThresholds[5][0])
                 {
+                    gearShift = true;
                     currentGear = 4;
                 }
                 break;
