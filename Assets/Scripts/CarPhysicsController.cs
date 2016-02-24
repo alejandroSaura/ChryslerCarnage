@@ -7,7 +7,7 @@ public class CarPhysicsController : MonoBehaviour
 
     public AnimationCurve enginePowerTorqueCurve;
     public float enginePower = 10;
-    public float brakePower = 1000;
+    public float brakePower = 1000;    
 
     public float airDragConstant;
     public float rollDragConstant;

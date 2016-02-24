@@ -16,6 +16,7 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve velocityToSideSlip;
     public AnimationCurve slipToSideSlip;
     public AnimationCurve maxSteerAngleCurve;
+    
 
 
     public float directionDeviationCorrection = -0.01f;
@@ -57,6 +58,8 @@ public class PhysicsWheel : MonoBehaviour
 
     float wheelSteerAngleTarget = 0;
 
+    bool goingBackwards = true;
+
 
 
     void Start ()
@@ -87,6 +90,15 @@ public class PhysicsWheel : MonoBehaviour
         latVelocity = transform.InverseTransformDirection(velocity).y;
         wheelLinearVelocity = angularVelocity * wheelRadius;
 
+        if (Vector3.Dot(mRigidbody.velocity, transform.forward) < 0 && brakeTorque>0)
+        {
+            goingBackwards = true;
+        }
+        else
+        {
+            goingBackwards = false;
+        }
+
         weightFactor = (supportedWeight-0.4f)/0.2f;
         Mathf.Clamp01(weightFactor);        
 
@@ -108,6 +120,7 @@ public class PhysicsWheel : MonoBehaviour
             }
             if (driveTorque == 0) // No driveTorque applied
             {
+                //slipRatio = 1;
                 angularVelocity = tangentialVelocity / wheelRadius;
             }
 
@@ -129,6 +142,24 @@ public class PhysicsWheel : MonoBehaviour
                     * transform.forward) ;                 
 
                 Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward, Color.red);
+            }
+
+            #endregion
+
+
+            #region reverse gear
+
+            if (tangentialVelocity < 1f && brakeTorque > 0)
+            {                
+
+                mRigidbody.AddForce(
+                    brakeTorque / wheelRadius
+                    * 1
+                    * (1 + weightFactor)                    
+                    * -transform.forward);
+                mRigidbody.drag = 0;
+
+                //Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward, Color.red);
             }
 
             #endregion
@@ -188,7 +219,7 @@ public class PhysicsWheel : MonoBehaviour
 
                 mRigidbody.drag = 5;
             }
-            if (velocity.magnitude < 2)
+            if (velocity.magnitude < 2 && !goingBackwards)
             {
                 // if the speed is too low just stop the car with Unity's drag
                 lateralForce = Vector3.zero;
@@ -207,12 +238,41 @@ public class PhysicsWheel : MonoBehaviour
                 Debug.DrawLine(transform.position, transform.position + -lateralForce);
             }
            
-            if(driveTorque > 0) mRigidbody.drag = 0;
+            if(driveTorque > 0 && !goingBackwards) mRigidbody.drag = 0;
             #endregion
 
+            #region rotateGeometry
 
+            angularVelocity = slipRatio * tangentialVelocity / wheelRadius
+                + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when 
+            wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+
+            #endregion
+
+            // final slipRatio calculus
+            slipRatio = angularVelocity / (tangentialVelocity / wheelRadius);
         }
-        // TO-DO: if not touching the ground set slipRatio to 1 and let the wheel spin freely.
+        else
+        {
+            #region wheelInAir
+            if (brakeTorque > 0 && driveTorque > 0)
+            {
+                angularVelocity = 0;
+                slipRatio = 0;
+            }
+            else if (brakeTorque > 0 && driveTorque == 0)
+            {
+                angularVelocity = userBrakeWeight.Evaluate(input.userBrake) * 50;
+                slipRatio = -1;
+            }
+            else if (brakeTorque == 0 && driveTorque > 0)
+            {
+                angularVelocity = userThrottleWeight.Evaluate(input.userThrottle) * 50;
+                slipRatio = 2;
+            }
+            wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+            #endregion
+        }
 
         #region steering
 
@@ -226,18 +286,9 @@ public class PhysicsWheel : MonoBehaviour
             joint.spring = spring;
         }
 
-        #endregion
+        #endregion      
 
-        #region rotateGeometry
-
-        angularVelocity = slipRatio * tangentialVelocity / wheelRadius 
-            + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when 
-        wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
-
-        #endregion
-
-        // final slipRatio calculus
-        slipRatio = angularVelocity / (tangentialVelocity / wheelRadius);         
+                
 
         // debug ----------------------------------------------------------------------
         
