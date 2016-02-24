@@ -167,6 +167,11 @@ public class PhysicsWheel : MonoBehaviour
 
             #region forwardForce
 
+            if(Vector3.Dot(mRigidbody.velocity, transform.forward) < 0)
+            {
+                tractionTorque *= 5;
+            }
+
             axisRigidBody.AddForceAtPosition(tractionTorque / wheelRadius * tangent *5, transform.position);
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
