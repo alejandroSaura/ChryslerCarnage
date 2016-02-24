@@ -87,27 +87,17 @@ public class PhysicsWheel : MonoBehaviour
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
 
-        //weightFactor = -((supportedWeight - meanWeightSupported) / meanWeightSupported) * 5.0f;
-        //if (weightFactor < -1) weightFactor = -1;
+        wheelLinearVelocity = angularVelocity * wheelRadius;
 
         weightFactor = (supportedWeight-0.4f)/0.2f;
         Mathf.Clamp01(weightFactor);
-
-        // get the slip ratio
-        wheelLinearVelocity = angularVelocity * wheelRadius;
 
         // loss of traction. Depends on the supported weight and the velocity.
         //tractionFactor = 1 - (tractionCurve.Evaluate(angularVelocity)) * (1-weightFactor);
         tractionFactor = (weightFactor);
 
-        //depends on traction and its own curve.
-        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1-tractionFactor);
-
-        // Rotate the geometry
-        angularVelocity = 1 + slipRatio * tangentialVelocity / wheelRadius;
-        //if (slipRatio < wheelsBlockFactor) angularVelocity = 0; // block the wheels
-
-        wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+        // get the slip ratio 
+        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1 - tractionFactor);        
 
         // Add forces:
 
@@ -117,14 +107,12 @@ public class PhysicsWheel : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius // if the wheel is touching the ground
             && Vector3.Angle(transform.right, -normal)>120) //and the angle of collision is reasonable
-        {
-            
+        {            
 
             // particular cases ----------------------------------------------
             if (tangentialVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
-                tractionTorque = 0;
-                slipRatio = 1;
+                tractionTorque = 0;                
             }
             if (driveTorque == 0) // No driveTorque applied
             {
@@ -135,21 +123,21 @@ public class PhysicsWheel : MonoBehaviour
             // brake
             if (tangentialVelocity > 1f && brakeTorque > 0)
             {
-                mRigidbody.AddForce(-brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward);
-                slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * -(weightFactor);
-                if (slipRatio > 1) slipRatio = 1; // we dont want the wheel to be spinning faster than the velocity of the ground when braking    
+                slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * (weightFactor - 1);
+                if (slipRatio > 1) slipRatio = 1; // we dont want the wheel to be spinning faster than the velocity of the ground when braking 
+                if (slipRatio < 0) slipRatio = 0; // block wheels when you brake too hard
 
-                Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 - weightFactor) * transform.forward, Color.red);
+                mRigidbody.AddForce(
+                    -brakeTorque / wheelRadius
+                    * (1 + weightFactor) // better braking with more weight
+                    * slipRatio // affected by slip factor
+                    * transform.forward) ;                 
+
+                Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward, Color.red);
             }
 
-            // accelerate 
-
-            //float rotation = maxSteerAngle * (input.userLeftStickHorizontal); //add an offset to correct the deviation bug
-            //Quaternion q = new Quaternion();
-            //q.eulerAngles = new Vector3(0, rotation, 0);
-            //Vector3 headingDirection = q * transform.parent.forward;
-
-            mRigidbody.AddForceAtPosition(tractionTorque / wheelRadius * tangent *5, transform.position);
+            // accelerate
+            axisRigidBody.AddForceAtPosition(tractionTorque / wheelRadius * tangent *5, transform.position);
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
             // lateral force ---------------------------------------------------
@@ -220,9 +208,7 @@ public class PhysicsWheel : MonoBehaviour
             if(driveTorque > 0) mRigidbody.drag = 0;
             //-------------------------------------------------------------------
 
-            // debug
-            slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
-            tractionColor = new Vector4(1 - tractionFactor, 1 - tractionFactor, 1, 1);
+            
         }
         // TO-DO: if not touching the ground set slipRatio to 1 and let the wheel spin freely.
 
@@ -236,6 +222,18 @@ public class PhysicsWheel : MonoBehaviour
             spring.targetPosition = Mathf.Lerp(spring.targetPosition, wheelSteerAngleTarget, Time.deltaTime*3);
             joint.spring = spring;
         }
+
+        // Rotate the geometry
+        angularVelocity = slipRatio * tangentialVelocity / wheelRadius 
+            + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when stopped
+        //if (slipRatio < wheelsBlockFactor) angularVelocity = 0; // block the wheels
+
+        wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+
+        slipRatio = angularVelocity / (tangentialVelocity / wheelRadius);
+        // debug ----------------------------------------------------------------------
+        slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
+        tractionColor = new Vector4(1 - tractionFactor, 1 - tractionFactor, 1, 1);
 
     }
 

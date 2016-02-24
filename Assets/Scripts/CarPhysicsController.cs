@@ -21,6 +21,7 @@ public class CarPhysicsController : MonoBehaviour
     public float[] gearRatios = { 2.9f, 2.66f, 1.78f, 1.3f, 1.0f, 0.74f, 0.5f }; // 0 = reverse
 
     // member variables ----------------------------------------------
+
     float engineRPM;
     float currentGearRatio;
     float rawEngineRPM;
@@ -203,7 +204,7 @@ public class CarPhysicsController : MonoBehaviour
 
         // rawEngineRPM = (frontLeftWheel.angularVelocity + frontRightWheel.angularVelocity + backLeftWheel.angularVelocity + backRightWheel.angularVelocity) / 4 * gearRatios[currentGear];
         //currentEngineRPM =
-        shiftGear();
+        //shiftGear();
         //currentGearRatio = currentGear;
         //Debug.Log(currentGearRatio);
         //Debug.Log(rawEngineRPM);

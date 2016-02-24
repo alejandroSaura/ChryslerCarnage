@@ -69,15 +69,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\CarController.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
-    <Compile Include="Assets\Scripts\Steering.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
     <Compile Include="Assets\Scripts\Wheel.cs" />
     <Compile Include="Assets\Scripts\WheelExperiment.cs" />
-    <Compile Include="Assets\Scripts\gearChanges.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ArtAssets\Don&apos;t add this folder to git.txt" />
