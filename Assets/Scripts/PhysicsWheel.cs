@@ -33,7 +33,6 @@ public class PhysicsWheel : MonoBehaviour
     public float latVelocity;
     public float wheelLinearVelocity;
     public float tangentialVelocity;
-    public float tractionFactor;
     public float weightFactor;
     public float slipRatio;
     public float latForce_velocityFactor;
@@ -86,30 +85,23 @@ public class PhysicsWheel : MonoBehaviour
         Vector3 velocity = mRigidbody.velocity;
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
-
         wheelLinearVelocity = angularVelocity * wheelRadius;
 
         weightFactor = (supportedWeight-0.4f)/0.2f;
-        Mathf.Clamp01(weightFactor);
+        Mathf.Clamp01(weightFactor);        
 
-        // loss of traction. Depends on the supported weight and the velocity.
-        //tractionFactor = 1 - (tractionCurve.Evaluate(angularVelocity)) * (1-weightFactor);
-        tractionFactor = (weightFactor);
+        // slip ratio. Will be modified below due to other effects 
+        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1 - weightFactor);         
 
-        // get the slip ratio 
-        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1 - tractionFactor);        
-
-        // Add forces:
-
-        tractionTorque = tractionFactor * driveTorque;
+        tractionTorque = weightFactor * driveTorque;
         tractionForce = (-tractionTorque / wheelRadius);       
 
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius // if the wheel is touching the ground
             && Vector3.Angle(transform.right, -normal)>120) //and the angle of collision is reasonable
-        {            
+        {
+            #region particularCases
 
-            // particular cases ----------------------------------------------
             if (tangentialVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
                 tractionTorque = 0;                
@@ -118,9 +110,12 @@ public class PhysicsWheel : MonoBehaviour
             {
                 angularVelocity = tangentialVelocity / wheelRadius;
             }
-            //-----------------------------------------------------------------
 
-            // brake
+            #endregion
+
+
+            #region brake
+
             if (tangentialVelocity > 1f && brakeTorque > 0)
             {
                 slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * (weightFactor - 1);
@@ -136,11 +131,18 @@ public class PhysicsWheel : MonoBehaviour
                 Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward, Color.red);
             }
 
-            // accelerate
+            #endregion
+
+
+            #region forwardForce
+
             axisRigidBody.AddForceAtPosition(tractionTorque / wheelRadius * tangent *5, transform.position);
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
-            // lateral force ---------------------------------------------------
+            #endregion
+
+
+            #region lateralForces
 
             latForce_velocityFactor = velocityToSideSlip.Evaluate(velocity.magnitude); // speed penalizer
             float latForce_slipFactor = slipToSideSlip.Evaluate(slipRatio); // tangentialSlip penalizer
@@ -206,13 +208,14 @@ public class PhysicsWheel : MonoBehaviour
             }
            
             if(driveTorque > 0) mRigidbody.drag = 0;
-            //-------------------------------------------------------------------
+            #endregion
 
-            
+
         }
         // TO-DO: if not touching the ground set slipRatio to 1 and let the wheel spin freely.
 
-        // Steer the wheel
+        #region steering
+
         maxSteerAngle = maxSteerAngleCurve.Evaluate(velocity.magnitude);
         wheelSteerAngleTarget = maxSteerAngle * input.userLeftStickHorizontal * inputSensitivityCurve.Evaluate(velocity.magnitude);
         HingeJoint joint = gameObject.GetComponent<HingeJoint>();
@@ -223,17 +226,23 @@ public class PhysicsWheel : MonoBehaviour
             joint.spring = spring;
         }
 
-        // Rotate the geometry
-        angularVelocity = slipRatio * tangentialVelocity / wheelRadius 
-            + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when stopped
-        //if (slipRatio < wheelsBlockFactor) angularVelocity = 0; // block the wheels
+        #endregion
 
+        #region rotateGeometry
+
+        angularVelocity = slipRatio * tangentialVelocity / wheelRadius 
+            + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when 
         wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
 
-        slipRatio = angularVelocity / (tangentialVelocity / wheelRadius);
+        #endregion
+
+        // final slipRatio calculus
+        slipRatio = angularVelocity / (tangentialVelocity / wheelRadius);         
+
         // debug ----------------------------------------------------------------------
+        
         slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
-        tractionColor = new Vector4(1 - tractionFactor, 1 - tractionFactor, 1, 1);
+        tractionColor = new Vector4(1 - weightFactor, 1 - weightFactor, 1, 1);
 
     }
 
