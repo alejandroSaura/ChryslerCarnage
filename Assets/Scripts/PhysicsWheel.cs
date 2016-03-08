@@ -69,6 +69,7 @@ public class PhysicsWheel : MonoBehaviour
 
     
     float restHeight;
+    float lastHeight;
 
     void Start ()
     {
@@ -86,7 +87,8 @@ public class PhysicsWheel : MonoBehaviour
 
         body = axisRigidBody.GetComponent<ConfigurableJoint>().connectedBody;        
 
-        restHeight = body.transform.InverseTransformPoint(transform.position).y;       
+        restHeight = body.transform.InverseTransformPoint(transform.position).y;
+        lastHeight = restHeight;
 
         // Get user input object
         input = transform.parent.gameObject.GetComponent<InputInterface>();
@@ -316,6 +318,7 @@ public class PhysicsWheel : MonoBehaviour
         #endregion
 
         #region animation
+
         if (wheelAnimator != null)
         {
             float height = body.transform.InverseTransformPoint(transform.position).y;
@@ -333,10 +336,10 @@ public class PhysicsWheel : MonoBehaviour
             //}         
             
             Mathf.Clamp01(wheelHeight);
-
             
-
+            // Apply the animation time in LateUpdate to avoid Jerkyness and here to avoid desync with the physics in collisions.
             wheelAnimator.Play(Animator.StringToHash("UpDown"), 0, 1-wheelHeight);
+            lastHeight = wheelHeight;
         }
 
         #endregion
@@ -348,6 +351,14 @@ public class PhysicsWheel : MonoBehaviour
         slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
         tractionColor = new Vector4(1 - weightFactor, 1 - weightFactor, 1, 1);
 
+    }
+
+    void LateUpdate()
+    {
+        if (wheelAnimator != null)
+        {
+            wheelAnimator.Play(Animator.StringToHash("UpDown"), 0, 1 - wheelHeight);
+        }
     }
 
     void OnCollisionStay(Collision collision)
