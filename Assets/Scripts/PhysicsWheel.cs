@@ -16,18 +16,24 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve velocityToSideSlip;
     public AnimationCurve slipToSideSlip;
     public AnimationCurve maxSteerAngleCurve;
+
+    // animation adjustment params
+    public float upAmplitude = 0.5f;
+    public float downAmplitude = 0.5f;
     
 
 
     public float directionDeviationCorrection = -0.01f;
 
     // exposed to be set by carController
+    public Animator wheelAnimator;
     public float supportedWeight;
     public float angularVelocity;
     public float driveTorque;
     public float brakeTorque;
     public float wheelRadius = 0.7f;
     public Rigidbody axisRigidBody;
+    public Rigidbody body;
 
 
     // debug
@@ -39,6 +45,7 @@ public class PhysicsWheel : MonoBehaviour
     public float latForce_velocityFactor;
     public float sideSlipAngleRatio;
     public float sideSlipAngle;
+    public float wheelHeight;
 
     Rigidbody mRigidbody;
     Transform wheelGeometry;
@@ -60,7 +67,8 @@ public class PhysicsWheel : MonoBehaviour
 
     bool goingBackwards = true;
 
-
+    
+    float restHeight;
 
     void Start ()
     {
@@ -75,7 +83,10 @@ public class PhysicsWheel : MonoBehaviour
         {
             axisRigidBody = gameObject.GetComponent<HingeJoint>().connectedBody;
         }
-        
+
+        body = axisRigidBody.GetComponent<ConfigurableJoint>().connectedBody;        
+
+        restHeight = body.transform.InverseTransformPoint(transform.position).y;       
 
         // Get user input object
         input = transform.parent.gameObject.GetComponent<InputInterface>();
@@ -94,7 +105,8 @@ public class PhysicsWheel : MonoBehaviour
     }
 
     void FixedUpdate ()
-    {
+    {        
+
         Vector3 velocity = mRigidbody.velocity;
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
@@ -301,12 +313,38 @@ public class PhysicsWheel : MonoBehaviour
             joint.spring = spring;
         }
 
-        #endregion      
+        #endregion
 
-                
+        #region animation
+        if (wheelAnimator != null)
+        {
+            float height = body.transform.InverseTransformPoint(transform.position).y;
+            wheelHeight = height - restHeight;
+            Mathf.Clamp(wheelHeight, -downAmplitude, upAmplitude);
+            //if (wheelHeight > 0)
+            {
+                wheelHeight /= upAmplitude;
+                wheelHeight += downAmplitude/(upAmplitude+downAmplitude);
+            }
+            //else
+            //{
+            //    wheelHeight /= downAmplitude;
+            //    wheelHeight += upAmplitude / (upAmplitude + downAmplitude);
+            //}         
+            
+            Mathf.Clamp01(wheelHeight);
+
+            
+
+            wheelAnimator.Play(Animator.StringToHash("UpDown"), 0, 1-wheelHeight);
+        }
+
+        #endregion
+
+
 
         // debug ----------------------------------------------------------------------
-        
+
         slipColor = new Vector4(1, 1 - (slipRatio - 1), 1 - (slipRatio - 1), 1);
         tractionColor = new Vector4(1 - weightFactor, 1 - weightFactor, 1, 1);
 

@@ -99,10 +99,10 @@ public class CarPhysicsController : MonoBehaviour
         backLeftWheel = transform.parent.FindChild("BackLeftWheel").GetComponent<PhysicsWheel>();
         backRightWheel = transform.parent.FindChild("BackRightWheel").GetComponent<PhysicsWheel>();
 
-        //frontLeftWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
-        //frontRightWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
-        //backLeftWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
-        //backRightWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
+        frontLeftWheel.wheelAnimator = transform.FindChild("l_frontWheel_system").GetComponent<Animator>();
+        //frontRightWheel.wheelAnimator = transform.FindChild("l_frontWheel_system").GetComponent<Animator>();
+        //backLeftWheel.wheelAnimator = transform.FindChild("l_frontWheel_system").GetComponent<Animator>();
+        //backRightWheel.wheelAnimator = transform.FindChild("l_frontWheel_system").GetComponent<Animator>();
 
 
         distanceBetweenWheels = (transform.parent.FindChild("FrontLeftWheel").position - transform.parent.FindChild("FrontRightWheel").position).magnitude;
