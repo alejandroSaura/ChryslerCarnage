@@ -62,22 +62,22 @@ public class CarPhysicsController : MonoBehaviour
         //gear thresholds
         gearThresholds = new float[7][];
         gearThresholds[1] = new float[2];
-        gearThresholds[1][0] = 1000;
-        gearThresholds[1][1] = 2000;
+        gearThresholds[1][0] = 500;
+        gearThresholds[1][1] = 1000;
         gearThresholds[2] = new float[2];
-        gearThresholds[2][0] = 1900;
-        gearThresholds[2][1] = 3000;
+        gearThresholds[2][0] = 1000;
+        gearThresholds[2][1] = 2000;
         gearThresholds[3] = new float[2];
-        gearThresholds[3][0] = 2900;
-        gearThresholds[3][1] = 4000;
+        gearThresholds[3][0] = 2000;
+        gearThresholds[3][1] = 3000;
         gearThresholds[4] = new float[2];
-        gearThresholds[4][0] = 3900;
-        gearThresholds[4][1] = 5000;
+        gearThresholds[4][0] = 3000;
+        gearThresholds[4][1] = 4000;
         gearThresholds[5] = new float[2];
-        gearThresholds[5][0] = 4900;
-        gearThresholds[5][1] = 6000;
+        gearThresholds[5][0] = 4000;
+        gearThresholds[5][1] = 4600;
         gearThresholds[6] = new float[2];
-        gearThresholds[6][0] = 5900;
+        gearThresholds[6][0] = 4600;
         gearThresholds[6][1] = 7000;
 
 
@@ -247,7 +247,7 @@ public class CarPhysicsController : MonoBehaviour
                 }
                     break;
             case 2:
-                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[2][0] + 1000) * meanSlipRatio * gearRatios[currentGear], minRPM, maxRPM) ;
+                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[2][0] + 1000) * meanSlipRatio, minRPM, maxRPM) ;
                 if (rawEngineRPM > gearThresholds[2][1])
                 {                    
                     currentGear = 3;
@@ -258,7 +258,7 @@ public class CarPhysicsController : MonoBehaviour
                 }
                 break;
             case 3:
-                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[3][0] + 1000) * meanSlipRatio * gearRatios[currentGear], minRPM, maxRPM);
+                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[3][0] + 1000) * meanSlipRatio, minRPM, maxRPM);
                 if (rawEngineRPM > gearThresholds[3][1])
                 {                    
                     currentGear = 4;
@@ -269,7 +269,7 @@ public class CarPhysicsController : MonoBehaviour
                 }
                 break;
             case 4:
-                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[4][0] + 1000) * meanSlipRatio * gearRatios[currentGear], minRPM, maxRPM);
+                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[4][0] + 1000) * meanSlipRatio, minRPM, maxRPM);
                 if (rawEngineRPM > gearThresholds[4][1])
                 {
                     currentGear = 5;
@@ -280,7 +280,7 @@ public class CarPhysicsController : MonoBehaviour
                 }
                 break;
             case 5:
-                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[5][0] + 1000) * meanSlipRatio * gearRatios[currentGear] *1.5f, minRPM, maxRPM);
+                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[5][0] + 1000) * meanSlipRatio, minRPM, maxRPM);
                 if (rawEngineRPM > gearThresholds[5][1])
                 {
                     currentGear = 6;
@@ -291,7 +291,7 @@ public class CarPhysicsController : MonoBehaviour
                 }
                 break;
             case 6:
-                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[6][0] + 1000) * meanSlipRatio * gearRatios[currentGear] * 1.5f, minRPM, maxRPM);
+                engineRPM = Mathf.Clamp((rawEngineRPM - gearThresholds[6][0] + 1000) * meanSlipRatio, minRPM, maxRPM);
                 if (rawEngineRPM < gearThresholds[6][0])
                 {
                     currentGear = 5;
