@@ -18,7 +18,7 @@ public class CarPhysicsController : MonoBehaviour
     public float minRPM = 1000.0f;
     public float maxRPM = 5000.0f;
     public float[][] gearThresholds;
-    public float[] gearRatios = { 0.2f, 0.5f, 1.0f, 2.0f, 2.25f, 2.5f, 2.5f }; // 0 = reverse
+    public float[] gearRatios = { 2.9f, 2.66f, 1.78f, 1.3f, 1f, 1.75f, 0.5f }; // 0 = reverse
 
     // member variables ----------------------------------------------
 

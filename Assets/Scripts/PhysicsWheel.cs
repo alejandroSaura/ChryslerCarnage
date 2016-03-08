@@ -221,18 +221,18 @@ public class PhysicsWheel : MonoBehaviour
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
             }
-            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) < 10f) // low speed turning
+            else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) <= 10f) // low speed turning
             {
                 lateralForce =
                     (
-                    (1 + Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
+                    (Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
                     //* (supportedWeight)*2
-                    * Mathf.Clamp(tangentialVelocity / 8, 0, float.MaxValue)
+                    * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * mRigidbody.mass*9.8f
-                    * 4                    
+                    * 2                    
                     ) * direction;
 
-                mRigidbody.drag = 5;
+                //mRigidbody.drag = 5;
             }
             //if (velocity.magnitude < 0.1f && !goingBackwards)
             //{
