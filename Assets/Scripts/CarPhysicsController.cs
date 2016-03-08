@@ -18,9 +18,11 @@ public class CarPhysicsController : MonoBehaviour
     public float minRPM = 1000.0f;
     public float maxRPM = 5000.0f;
     public float[][] gearThresholds;
-    public float[] gearRatios = { 2.9f, 2.66f, 2.5f, 2.2f, 2.1f, 2f, 1.9f }; // 0 = reverse
+    public float[] gearRatios = { 0.2f, 0.5f, 1.0f, 2.0f, 2.25f, 2.5f, 2.5f }; // 0 = reverse
 
     // member variables ----------------------------------------------
+
+    float velocity_forward;
 
     float engineRPM;
     float rawEngineRPM;
@@ -46,8 +48,10 @@ public class CarPhysicsController : MonoBehaviour
     PhysicsWheel backRightWheel;
 
     // Axis
-    Transform FrontAxis;
-    Transform RearAxis;
+    Transform FrontAxisRight;
+    Transform FrontAxisLeft;
+    Transform RearAxisRight;
+    Transform RearAxisLeft;
     float distanceBetweenWheels;
 
     // Integration variables
@@ -86,17 +90,19 @@ public class CarPhysicsController : MonoBehaviour
         mRigidbody.centerOfMass = centerOfMass;
 
         // Find all car parts
-        FrontAxis = transform.parent.FindChild("FrontAxis");
-        RearAxis = transform.parent.FindChild("RearAxis");
+
+        FrontAxisRight = transform.parent.FindChild("FrontAxisRight");
+        RearAxisRight = transform.parent.FindChild("RearAxisRight");
+
         frontLeftWheel = transform.parent.FindChild("FrontLeftWheel").GetComponent<PhysicsWheel>();
         frontRightWheel = transform.parent.FindChild("FrontRightWheel").GetComponent<PhysicsWheel>();
         backLeftWheel = transform.parent.FindChild("BackLeftWheel").GetComponent<PhysicsWheel>();
         backRightWheel = transform.parent.FindChild("BackRightWheel").GetComponent<PhysicsWheel>();
 
-        frontLeftWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
-        frontRightWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
-        backLeftWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
-        backRightWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
+        //frontLeftWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
+        //frontRightWheel.axisRigidBody = FrontAxis.GetComponent<Rigidbody>();
+        //backLeftWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
+        //backRightWheel.axisRigidBody = RearAxis.GetComponent<Rigidbody>();
 
 
         distanceBetweenWheels = (transform.parent.FindChild("FrontLeftWheel").position - transform.parent.FindChild("FrontRightWheel").position).magnitude;
@@ -113,8 +119,7 @@ public class CarPhysicsController : MonoBehaviour
     }
 
     void OnGUI()
-    {
-        float velocity_forward = Vector3.Dot(mRigidbody.velocity, transform.forward);
+    {      
 
         GUI.Box(new Rect(10, 10, 300, 200), "Debug Data");
         GUI.TextArea(new Rect(15, 30, 290, 20), "Forward velocity = " + velocity_forward * 3.6f + " km/h");
@@ -132,16 +137,18 @@ public class CarPhysicsController : MonoBehaviour
 
     void FixedUpdate ()
     {
+        velocity_forward = Vector3.Dot(mRigidbody.velocity, transform.forward);
 
-       
         // calculate weight dynamic transfer ----------------------
 
         Vector3 CenterOfMassAligned = centerOfMass; // put the three objects in the same plane (y=0)
         CenterOfMassAligned.y = 0.0f;
-        Vector3 FrontAxisAligned = FrontAxis.localPosition;
-        FrontAxisAligned.y = 0.0f;
-        Vector3 RearAxisAligned = RearAxis.localPosition;
-        RearAxisAligned.y = 0.0f;
+        Vector3 FrontAxisAligned = FrontAxisRight.localPosition;
+        //FrontAxisAligned.y = 0.0f;
+        FrontAxisAligned.x = 0.0f;
+        Vector3 RearAxisAligned = RearAxisRight.localPosition;
+        //RearAxisAligned.y = 0.0f;
+        RearAxisAligned.x = 0.0f;
 
         float distanceToFront = (CenterOfMassAligned - FrontAxisAligned).magnitude;
         float distanceToRear = (CenterOfMassAligned - RearAxisAligned).magnitude;
@@ -168,7 +175,7 @@ public class CarPhysicsController : MonoBehaviour
         float rightWeightPercent = Mathf.Clamp01(rightWeight / normalWeight);
         float leftWeightPercent = Mathf.Clamp01(leftWeight / normalWeight);
 
-        weightPosition = (FrontAxis.localPosition * frontWeightPercent + RearAxis.localPosition * rearWeightPercent);        
+        weightPosition = (FrontAxisAligned * frontWeightPercent + RearAxisAligned * rearWeightPercent);        
         weightPosition += ((distanceBetweenWheels) * (rightWeightPercent) - (distanceBetweenWheels) * (leftWeightPercent)) * new Vector3(1,0,0) * 5;
 
         // transfer the weight to the wheels

@@ -67,6 +67,16 @@ public class PhysicsWheel : MonoBehaviour
         mRigidbody = gameObject.GetComponent<Rigidbody>();
         wheelGeometry = transform.FindChild("wheelGeometry");
 
+        if (gameObject.GetComponent<FixedJoint>() != null)
+        {
+            axisRigidBody = gameObject.GetComponent<FixedJoint>().connectedBody;
+        }
+        else if (gameObject.GetComponent<HingeJoint>() != null)
+        {
+            axisRigidBody = gameObject.GetComponent<HingeJoint>().connectedBody;
+        }
+        
+
         // Get user input object
         input = transform.parent.gameObject.GetComponent<InputInterface>();
 
@@ -109,7 +119,7 @@ public class PhysicsWheel : MonoBehaviour
         tractionForce = (-tractionTorque / wheelRadius);       
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius // if the wheel is touching the ground
+        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius * 2f // if the wheel is touching the ground
             && Vector3.Angle(transform.right, -normal)>120) //and the angle of collision is reasonable
         {
             #region particularCases
@@ -200,7 +210,7 @@ public class PhysicsWheel : MonoBehaviour
                 float maxLateralForce =
                     (
                     (Mathf.Abs(latVelocity) * Mathf.Sign(latVelocity))
-                    //* (supportedWeight)
+                    //* (supportedWeight)*2
                     * mRigidbody.mass*9.8f
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * latForce_slipFactor 
@@ -216,20 +226,20 @@ public class PhysicsWheel : MonoBehaviour
                 lateralForce =
                     (
                     (1 + Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
-                    //* (supportedWeight)
-                    * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
+                    //* (supportedWeight)*2
+                    * Mathf.Clamp(tangentialVelocity / 8, 0, float.MaxValue)
                     * mRigidbody.mass*9.8f
                     * 4                    
                     ) * direction;
 
                 mRigidbody.drag = 5;
             }
-            if (velocity.magnitude < 2 && !goingBackwards)
-            {
-                // if the speed is too low just stop the car with Unity's drag
-                lateralForce = Vector3.zero;
-                mRigidbody.drag = 40;
-            }
+            //if (velocity.magnitude < 0.1f && !goingBackwards)
+            //{
+            //    // if the speed is too low just stop the car with Unity's drag
+            //    //lateralForce = Vector3.zero;
+            //    mRigidbody.drag = 40;
+            //}
 
             // Apply force
             if ((tangentialVelocity) > 0f) // going forward
@@ -250,7 +260,7 @@ public class PhysicsWheel : MonoBehaviour
 
             angularVelocity = slipRatio * tangentialVelocity / wheelRadius
                 + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when 
-            wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+            wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
 
             #endregion
 
@@ -275,7 +285,7 @@ public class PhysicsWheel : MonoBehaviour
                 angularVelocity = userThrottleWeight.Evaluate(input.userThrottle) * 50;
                 slipRatio = 2;
             }
-            wheelGeometry.Rotate(0.0f, -angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f);
+            wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
             #endregion
         }
 
