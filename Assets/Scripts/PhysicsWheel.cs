@@ -20,10 +20,7 @@ public class PhysicsWheel : MonoBehaviour
     // animation adjustment params
     public float upAmplitude = 0.5f;
     public float downAmplitude = 0.5f;
-    
 
-
-    public float directionDeviationCorrection = -0.01f;
 
     // exposed to be set by carController
     public Animator wheelAnimator;
@@ -34,6 +31,9 @@ public class PhysicsWheel : MonoBehaviour
     public float wheelRadius = 0.7f;
     public Rigidbody axisRigidBody;
     public Rigidbody body;
+    public Transform steeringBone = null;
+    public Transform wheelGeometry = null;
+
 
 
     // debug
@@ -48,7 +48,7 @@ public class PhysicsWheel : MonoBehaviour
     public float wheelHeight;
 
     Rigidbody mRigidbody;
-    Transform wheelGeometry;
+    
 
     // User input object
     InputInterface input;
@@ -74,7 +74,7 @@ public class PhysicsWheel : MonoBehaviour
     void Start ()
     {
         mRigidbody = gameObject.GetComponent<Rigidbody>();
-        wheelGeometry = transform.FindChild("wheelGeometry");
+        //wheelGeometry = transform.FindChild("wheelGeometry");
 
         if (gameObject.GetComponent<FixedJoint>() != null)
         {
@@ -274,7 +274,9 @@ public class PhysicsWheel : MonoBehaviour
 
             angularVelocity = slipRatio * tangentialVelocity / wheelRadius
                 + userThrottleWeight.Evaluate(input.userThrottle) * 20 / Mathf.Clamp(tangentialVelocity, 0.2f, 9999); // simulation of slip when 
-            wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
+
+            if (wheelGeometry != null)
+                wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
 
             #endregion
 
@@ -299,7 +301,8 @@ public class PhysicsWheel : MonoBehaviour
                 angularVelocity = userThrottleWeight.Evaluate(input.userThrottle) * 50;
                 slipRatio = 2;
             }
-            wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
+            if (wheelGeometry != null)
+                wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
             #endregion
         }
 
