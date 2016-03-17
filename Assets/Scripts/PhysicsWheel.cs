@@ -56,7 +56,7 @@ public class PhysicsWheel : MonoBehaviour
     Vector3 normal;
     Vector3 tangent;
 
-    float wheelSteerAngleTarget = 0;
+    public float wheelSteerAngleTarget = 0;
 
     bool goingBackwards = true;
 
@@ -85,6 +85,7 @@ public class PhysicsWheel : MonoBehaviour
 
     void FixedUpdate ()
     {
+       // Debug.Log(input.userThrottle);
         Vector3 velocity = mRigidbody.velocity;
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
@@ -215,7 +216,7 @@ public class PhysicsWheel : MonoBehaviour
             {
                 lateralForce =
                     (
-                    (1 + Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
+                    (Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
                     //* (supportedWeight)
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
                     * mRigidbody.mass*9.8f

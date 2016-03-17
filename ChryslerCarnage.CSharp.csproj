@@ -18,7 +18,6 @@
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.2f1</UnityVersion>
     <RootNamespace></RootNamespace>
-    <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -69,6 +68,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AI Script\AICarMovement.cs" />
+    <Compile Include="Assets\Scripts\AI Script\carBehaviours.cs" />
+    <Compile Include="Assets\Scripts\AI Script\carPathMover.cs" />
+    <Compile Include="Assets\Scripts\AI Script\pathScript.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
@@ -76,7 +79,6 @@
     <Compile Include="Assets\Scripts\WheelOld.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\ArtAssets\Don&apos;t add this folder to git.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
   </ItemGroup>
