@@ -11,7 +11,7 @@ class CurveData
 {
     public bool closed;
     public NodeData[] nodesData;
-    //public BezierSpline[] splinesData;
+    public BezierData[] splinesData;
     
 }
 
@@ -91,12 +91,12 @@ public class Curve : TrackElement
         }
         data.nodesData = _nodesData.ToArray();
 
-        //List<BezierSpline> _splinesData = new List<BezierSpline>();
-        //foreach (BezierSpline b in splines)
-        //{
-        //    _splinesData.Add(b.Serialize());
-        //}
-        //data.splinesData = _splinesData.ToArray();
+        List<BezierData> _splinesData = new List<BezierData>();
+        foreach (BezierSpline b in splines)
+        {
+            _splinesData.Add(b.GetData());
+        }
+        data.splinesData = _splinesData.ToArray();
 
         data.closed = this.closed;
 
@@ -128,6 +128,7 @@ public class Curve : TrackElement
                 if (previousNode != null)
                 {
                     BezierSpline spline = CreateSpline(previousNode, node);
+                    spline.SetData(data.splinesData[i - 1]);
                     spline.Extrude(meshes[i - 1], extrudeShape);
                 }
                 previousNode = node;

@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(BezierSpline))]
+[CanEditMultipleObjects]
 public class BezierSplineEditor : Editor
 {
 

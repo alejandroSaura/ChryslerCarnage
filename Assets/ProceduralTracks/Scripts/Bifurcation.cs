@@ -10,6 +10,7 @@ using System;
 class BifurcationData
 {
     public NodeData[] nodesData;
+    public BezierData[] splinesData;
     public float planeX;    
 }
 
@@ -142,16 +143,15 @@ public class Bifurcation : TrackElement
             data.nodesData = _nodesData.ToArray();
         }
 
+        List<BezierData> _splinesData = new List<BezierData>();
+        foreach (BezierSpline b in splines)
+        {
+            _splinesData.Add(b.GetData());
+        }
+        data.splinesData = _splinesData.ToArray();
+
         data.planeX = planeX;
 
-        
-
-        //List<BezierSpline> _splinesData = new List<BezierSpline>();
-        //foreach (BezierSpline b in splines)
-        //{
-        //    _splinesData.Add(b.Serialize());
-        //}
-        //data.splinesData = _splinesData.ToArray();
 
         bf.Serialize(file, data);
         file.Close();
@@ -182,6 +182,9 @@ public class Bifurcation : TrackElement
             // Create Splines           
             CreateSpline(nodes[0], nodes[1]).ExtrudeSide(meshes[0], extrudeShape, "right", planeX);
             CreateSpline(nodes[0], nodes[2]).ExtrudeSide(meshes[1], extrudeShape, "left", planeX);
+
+            splines[0].SetData(data.splinesData[0]);
+            splines[1].SetData(data.splinesData[1]);
         }
         else
         {

@@ -19,6 +19,8 @@ public struct BezierData
 [ExecuteInEditMode]
 public class BezierSpline : MonoBehaviour
 {
+    public bool isPath = false;
+
     // for making paths
     public bool north_south = false;
     public bool north_east = false;
@@ -146,6 +148,9 @@ public class BezierSpline : MonoBehaviour
 
     void OnDrawGizmos()
     {
+        if (isPath) Gizmos.color = Color.red;
+        else Gizmos.color = Color.white;
+
         if (endNode == null) return;
 
         float segmentLength = 1.0f / (float)numTracersDebug;

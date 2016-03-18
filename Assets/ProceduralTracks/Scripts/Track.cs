@@ -45,7 +45,11 @@ public class Track : MonoBehaviour
         {
             Load();
             if (state == "PlayMode") StartCoroutine(CombineMeshes());
-            if (state == "EditorMode") ReactivateMeshes();
+            if (state == "EditorMode")
+            {
+                ReactivateMeshes();
+                RemovePath();
+            }
         }
         lastState = state;
 
@@ -56,6 +60,37 @@ public class Track : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        SetPath("south_east");
+    }
+
+    public void RemovePath()
+    {
+        BezierSpline[] splines = gameObject.GetComponentsInChildren<BezierSpline>();
+
+        foreach (BezierSpline s in splines)
+        {
+            s.isPath = false;
+        }
+    }
+
+    public void SetPath(string path)
+    {
+        BezierSpline[] splines = gameObject.GetComponentsInChildren<BezierSpline>();
+        
+        foreach (BezierSpline s in splines)
+        {
+            bool isPath = (bool)typeof(BezierSpline).GetField(path).GetValue(s);
+            if (isPath)
+            {
+                s.isPath = true;
+            }
+            else s.isPath = false;
+        }
+    }
+
+
     public void ReactivateMeshes()
     {
         MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();        
@@ -64,7 +99,9 @@ public class Track : MonoBehaviour
         {
             if (meshFilters[i].gameObject != gameObject)
             {
-                meshFilters[i].gameObject.SetActive(true);
+                //meshFilters[i].gameObject.SetActive(true);
+                meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = true;
+                meshFilters[i].gameObject.GetComponent<MeshCollider>().enabled = true;
             }
             i++;
         }
@@ -93,7 +130,10 @@ public class Track : MonoBehaviour
             {
                 combine[i].mesh = meshFilters[i].sharedMesh;
                 combine[i].transform = transform.worldToLocalMatrix * (meshFilters[i].transform.localToWorldMatrix);
-                meshFilters[i].gameObject.SetActive(false);                
+                //meshFilters[i].gameObject.SetActive(false);   
+
+                meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                meshFilters[i].gameObject.GetComponent<MeshCollider>().enabled = false;
             }
             i++;
         }
