@@ -154,7 +154,7 @@ public class Node : MonoBehaviour
         //Gizmos.DrawWireSphere(transform.position + transform.forward * frontWeight, gizmoSize / 2);
         //Gizmos.DrawWireSphere(transform.position - transform.forward * backWeight, gizmoSize / 2);
 
-        DebugExtension.DrawArrow(transform.position, transform.forward / 2, Color.cyan);
+        DebugExtension.DrawArrow(transform.position, transform.forward*8, Color.red);
 
         // up and right indicators
         Gizmos.color = new Vector4(1, 0, 0, 1);

@@ -21,6 +21,8 @@ public class Curve : TrackElement
 {
     // connectors
     public TrackElement nextCurve;
+    public string nextCurveNodeSelector = "";
+    public string previousCurveNodeSelector = "";
     // ----------
 
     public bool invisible;
@@ -69,15 +71,48 @@ public class Curve : TrackElement
     public override void Connect()
     {
         connected = false;
-        // Maintain conection with next curve     
-        
-        if (nextCurve != null && nextCurve.nodes.Count > 0 && nextCurve.GetType() != typeof(Bifurcation))
-        {
-            nodes[nodes.Count - 1].Copy(nextCurve.nodes[0]);
-            connected = true;
+        // Maintain conection with next curve
 
-            nextCurve.previousCurve = this;
+        if (nextCurveNodeSelector == "doNothing") return;
+
+        if (nextCurveNodeSelector == "start" || nextCurveNodeSelector == "")
+        {
+            if (nextCurve != null && nextCurve.nodes.Count > 0 && nextCurve.GetType() != typeof(Bifurcation))
+            {
+                nodes[nodes.Count - 1].Copy(nextCurve.nodes[0]);
+                connected = true;
+
+                nextCurve.previousCurve = this;
+            }
+            if (nextCurve != null && nextCurve.GetType() == typeof(Bifurcation))
+            {// Conection to bifurcation
+                nextCurve.nodes[0].Copy(nodes[nodes.Count - 1]);
+                connected = true;
+
+                nextCurve.previousCurve = this;
+            }
         }
+        else if (nextCurveNodeSelector == "end")
+        {
+            if (nextCurve != null && nextCurve.nodes.Count > 0 && nextCurve.GetType() != typeof(Bifurcation))
+            {
+                nodes[nodes.Count - 1].Copy(nextCurve.nodes[nextCurve.nodes.Count-1]);
+                nextCurve.nodes[nextCurve.nodes.Count - 1].reverse = true;
+                nodes[nodes.Count - 1].reverse = true;
+                connected = true;
+
+                ((Curve)nextCurve).nextCurve = this;
+                ((Curve)nextCurve).nextCurveNodeSelector = "doNothing";
+            }
+        }
+
+        if (previousCurve != null && previousCurveNodeSelector == "start")
+        {
+            nodes[0].Copy(previousCurve.nodes[0]);
+            previousCurve.previousCurve = this;
+            nodes[0].reverse = true;
+        }
+
     }
 
     public void Save()

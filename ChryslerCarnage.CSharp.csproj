@@ -75,6 +75,7 @@
     <Compile Include="Assets\ProceduralTracks\Scripts\Bifurcation.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\Curve.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\ExtrudeShape.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\FollowPath.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\MenuExtension.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\Node.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\NodeControl.cs" />

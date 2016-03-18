@@ -40,7 +40,14 @@ public class BezierSpline : MonoBehaviour
     public Node startNode;
     public Node endNode;
 
-    OrientedPoint[] orientedPoints;   
+    OrientedPoint[] orientedPoints;
+
+    public float length;
+
+    void Start()
+    {
+        length = GetLength();
+    }
     
     public BezierData GetData()
     {
@@ -183,12 +190,12 @@ public class BezierSpline : MonoBehaviour
     }
 
     // find the length of the spline
-    float GetLength()
+    public float GetLength()
     {
         // chorded approximation
         float length = 0;
 
-        int numChords = 100;
+        int numChords = 500;
         float chordLength = 1.0f / (float)numChords;
         Vector3 start = startNode.position;
         for (int i = 1; i < numChords + 1; ++i)

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 [ExecuteInEditMode]
@@ -9,10 +10,13 @@ public class NodeControl : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        Vector3 pos = transform.localPosition;
-        pos.x = 0;
-        pos.y = 0;
-        transform.localPosition = pos;
+        if (!EditorApplication.isPlaying)
+        {
+            Vector3 pos = transform.localPosition;
+            pos.x = 0;
+            pos.y = 0;
+            transform.localPosition = pos;
+        }
     }
 
     void OnDrawGizmos()

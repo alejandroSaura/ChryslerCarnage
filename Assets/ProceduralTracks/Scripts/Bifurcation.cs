@@ -89,6 +89,8 @@ public class Bifurcation : TrackElement
                 //nodes[1].reverse = true;
                 nextCurveRight.nodes[nextCurveRight.nodes.Count - 1].reverse = true;
                 ((Curve)nextCurveRight).nextCurve = this;
+                ((Curve)nextCurveRight).nextCurveNodeSelector = "doNothing";
+
             }
             //else if (nextCurveRightNodeSelector == "left")
             //{
@@ -125,6 +127,7 @@ public class Bifurcation : TrackElement
                 //nodes[2].reverse = true;
                 nextCurveLeft.nodes[nextCurveLeft.nodes.Count - 1].reverse = true;
                 ((Curve)nextCurveLeft).nextCurve = this;
+                ((Curve)nextCurveLeft).nextCurveNodeSelector = "doNothing";
             }
             //else if (nextCurveLeftNodeSelector == "left")
             //{
