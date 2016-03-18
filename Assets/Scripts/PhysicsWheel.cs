@@ -133,8 +133,8 @@ public class PhysicsWheel : MonoBehaviour
         tractionForce = (-tractionTorque / wheelRadius);       
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius * 2f // if the wheel is touching the ground
-            && Vector3.Angle(transform.right, -normal)>120) //and the angle of collision is reasonable
+        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius * 2f) // if the wheel is touching the ground
+            //&& Vector3.Angle(transform.right, -normal)>120) //and the angle of collision is reasonable
         {
             #region particularCases
 
@@ -196,7 +196,7 @@ public class PhysicsWheel : MonoBehaviour
                 tractionTorque *= 5;
             }
 
-            axisRigidBody.AddForceAtPosition(tractionTorque / wheelRadius * tangent *5, transform.position);
+            axisRigidBody.AddForceAtPosition(tractionTorque / wheelRadius * transform.forward * 5, transform.position);
             Debug.DrawLine(transform.position, transform.position + tractionTorque / wheelRadius * transform.forward, Color.green);
 
             #endregion
@@ -207,7 +207,8 @@ public class PhysicsWheel : MonoBehaviour
             latForce_velocityFactor = velocityToSideSlip.Evaluate(velocity.magnitude); // speed penalizer
             float latForce_slipFactor = slipToSideSlip.Evaluate(slipRatio); // tangentialSlip penalizer
             //Debug.Log(velocity.magnitude);
-            Vector3 direction = Vector3.Cross(transform.forward, normal).normalized;
+            //Vector3 direction = Vector3.Cross(transform.forward, normal).normalized;
+            Vector3 direction = transform.up;
 
             sideSlipAngle = Vector3.Angle(transform.forward, velocity);
             //if (sideSlipAngle > 180) sideSlipAngle = 360 - sideSlipAngle;
@@ -366,13 +367,15 @@ public class PhysicsWheel : MonoBehaviour
 
     void OnCollisionStay(Collision collision)
     {
-        normal = Vector3.zero;
-        foreach (ContactPoint contact in collision.contacts)
-        {
-            normal += contact.normal;
-        }
-        normal = (normal / collision.contacts.Length).normalized;
-        tangent = Vector3.Cross(normal, transform.up);
+        //normal = Vector3.zero;
+        //foreach (ContactPoint contact in collision.contacts)
+        //{
+        //    normal += contact.normal;
+        //}
+        //normal = (normal / collision.contacts.Length).normalized;
+        //tangent = Vector3.Cross(normal, transform.up);
+
+        normal = transform.forward;
     }
 
 }

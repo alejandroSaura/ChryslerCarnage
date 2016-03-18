@@ -69,6 +69,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\DebugDrawingExtension\DebugExtension.cs" />
+    <Compile Include="Assets\DebugDrawingExtension\Example\Example.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\BezierSpline.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\Bifurcation.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\Curve.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\ExtrudeShape.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\MenuExtension.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\Node.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\NodeControl.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\OrientedPoint.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\SerializableStructures.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\Track.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\TrackElement.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
@@ -83,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ArtAssets\Don&apos;t add this folder to git.txt" />
+    <None Include="Assets\DebugDrawingExtension\readme.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
   </ItemGroup>
