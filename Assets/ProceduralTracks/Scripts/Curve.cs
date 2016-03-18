@@ -66,11 +66,14 @@ public class Curve : TrackElement
     public override void Connect()
     {
         connected = false;
-        // Maintain conection with next curve        
-        if (nextCurve != null && nextCurve.nodes.Count > 0)
+        // Maintain conection with next curve     
+        
+        if (nextCurve != null && nextCurve.nodes.Count > 0 && nextCurve.GetType() != typeof(Bifurcation))
         {
             nodes[nodes.Count - 1].Copy(nextCurve.nodes[0]);
             connected = true;
+
+            nextCurve.previousCurve = this;
         }
     }
 

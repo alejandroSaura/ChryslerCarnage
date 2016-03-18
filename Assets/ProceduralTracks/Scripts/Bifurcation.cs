@@ -70,59 +70,72 @@ public class Bifurcation : TrackElement
         if (nextCurveRight != null)
         {
             if (nextCurveRightNodeSelector == "start")
+            {
                 //nodes[1].Copy(nextCurveRight.nodes[0]);
                 nextCurveRight.nodes[0].Copy(nodes[1]);
-            else if (nextCurveRightNodeSelector == "right")
-            {
-                //nodes[1].Copy(nextCurveRight.nodes[1]);
-                nextCurveRight.nodes[1].Copy(nodes[1]);
-                //nodes[1].reverse = true;
-                nextCurveRight.nodes[1].reverse = true;
+                nextCurveRight.previousCurve = this;
             }
+            //else if (nextCurveRightNodeSelector == "right")
+            //{
+            //    //nodes[1].Copy(nextCurveRight.nodes[1]);
+            //    nextCurveRight.nodes[1].Copy(nodes[1]);
+            //    //nodes[1].reverse = true;
+            //    nextCurveRight.nodes[1].reverse = true;
+            //}
             else if (nextCurveRightNodeSelector == "end")
             {
                 //nodes[1].Copy(nextCurveRight.nodes[1]);
-                nextCurveRight.nodes[nextCurveRight.nodes.Count-1].Copy(nodes[1]);
+                nextCurveRight.nodes[nextCurveRight.nodes.Count - 1].Copy(nodes[1]);
                 //nodes[1].reverse = true;
                 nextCurveRight.nodes[nextCurveRight.nodes.Count - 1].reverse = true;
+                ((Curve)nextCurveRight).nextCurve = this;
             }
-            else if (nextCurveRightNodeSelector == "left")
-            {
-                //nodes[1].Copy(nextCurveRight.nodes[2]);
-                nextCurveRight.nodes[2].Copy(nodes[1]);
-                //nodes[1].reverse = true;
-                nextCurveRight.nodes[2].reverse = true;
-            }
+            //else if (nextCurveRightNodeSelector == "left")
+            //{
+            //    //nodes[1].Copy(nextCurveRight.nodes[2]);
+            //    nextCurveRight.nodes[2].Copy(nodes[1]);
+            //    //nodes[1].reverse = true;
+            //    nextCurveRight.nodes[2].reverse = true;
+            //}
             //nodes[1].Copy(nextCurveRight);
+
+            //nextCurveRight.previousCurve = this;
         }
 
         if (nextCurveLeft != null)
         {
             if (nextCurveLeftNodeSelector == "start")
+            {
                 //nodes[2].Copy(nextCurveLeft.nodes[0]);
                 nextCurveLeft.nodes[0].Copy(nodes[2]);
-            else if (nextCurveLeftNodeSelector == "right")
-            {
-                //nodes[2].Copy(nextCurveLeft.nodes[1]);
-                nextCurveLeft.nodes[1].Copy(nodes[2]);
-                //nodes[2].reverse = true;
-                nextCurveLeft.nodes[1].reverse = true;
+                nextCurveLeft.previousCurve = this;
             }
+
+            //else if (nextCurveLeftNodeSelector == "right")
+            //{
+            //    //nodes[2].Copy(nextCurveLeft.nodes[1]);
+            //    nextCurveLeft.nodes[1].Copy(nodes[2]);
+            //    //nodes[2].reverse = true;
+            //    nextCurveLeft.nodes[1].reverse = true;
+            //}
             else if (nextCurveLeftNodeSelector == "end")
             {
                 //nodes[2].Copy(nextCurveLeft.nodes[1]);
                 nextCurveLeft.nodes[nextCurveLeft.nodes.Count - 1].Copy(nodes[2]);
                 //nodes[2].reverse = true;
                 nextCurveLeft.nodes[nextCurveLeft.nodes.Count - 1].reverse = true;
+                ((Curve)nextCurveLeft).nextCurve = this;
             }
-            else if (nextCurveLeftNodeSelector == "left")
-            {
-                //nodes[2].Copy(nextCurveLeft.nodes[2]);
-                nextCurveLeft.nodes[2].Copy(nodes[2]);
-                //nodes[2].reverse = true;
-                nextCurveLeft.nodes[2].reverse = true;
-            }
+            //else if (nextCurveLeftNodeSelector == "left")
+            //{
+            //    //nodes[2].Copy(nextCurveLeft.nodes[2]);
+            //    nextCurveLeft.nodes[2].Copy(nodes[2]);
+            //    //nodes[2].reverse = true;
+            //    nextCurveLeft.nodes[2].reverse = true;
+            //}
             //nodes[2].Copy(nextCurveLeft);
+
+            //nextCurveLeft.previousCurve = this;
         }
     }
 

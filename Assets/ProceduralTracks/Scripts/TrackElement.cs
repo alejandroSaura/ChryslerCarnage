@@ -14,6 +14,8 @@ public abstract class TrackElement : MonoBehaviour
     public bool east_west = false;
     //-----------------
 
+    public TrackElement previousCurve;
+
     public float trackWidth;
     public int horizontalDivisions;
     public int divisionsPerCurve = 5;
