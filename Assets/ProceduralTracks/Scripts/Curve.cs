@@ -10,6 +10,7 @@ using System;
 class CurveData
 {
     public bool closed;
+    public bool invisible;
     public NodeData[] nodesData;
     public BezierData[] splinesData;
     
@@ -21,7 +22,9 @@ public class Curve : TrackElement
     // connectors
     public TrackElement nextCurve;
     // ----------
-    
+
+    public bool invisible;
+
     bool closed = false;
     bool connected = false;
     
@@ -102,6 +105,7 @@ public class Curve : TrackElement
         data.splinesData = _splinesData.ToArray();
 
         data.closed = this.closed;
+        data.invisible = this.invisible;
 
         bf.Serialize(file, data);
         file.Close();
@@ -143,6 +147,8 @@ public class Curve : TrackElement
                 BezierSpline spline = CreateSpline(nodes[nodes.Count-1], nodes[0]);
                 spline.Extrude(meshes[meshes.Count-1], extrudeShape);
             }
+
+            this.invisible = data.invisible;
         }
         else
         {
@@ -196,6 +202,17 @@ public class Curve : TrackElement
 
     public override void Extrude()
     {
+        if (invisible)
+        {
+            for (int i = 0; i < splines.Count; ++i)
+            {
+                splines[i].gameObject.GetComponent<MeshCollider>().sharedMesh = null;
+                splines[i].gameObject.GetComponent<MeshFilter>().sharedMesh = null;
+            }
+            
+            return;
+        }
+
         if (extrudeShape == null)
         {
             extrudeShape = new ExtrudeShape();
