@@ -49,8 +49,10 @@ public class Bifurcation : TrackElement
             
         }
         if (state != lastState)
-        {
+        {            
             Load();
+            Connect();
+            if (splines != null) Extrude();
         }
         lastState = state;
 
@@ -58,11 +60,12 @@ public class Bifurcation : TrackElement
         if (state == "EditorMode")
         {
             if (nodes != null) Save();
-            if (splines != null) Extrude();
+            Connect();
+            //if (splines != null) Extrude();
         }
 
         // Maintain conection with next curves        
-        Connect();
+        //Connect();
     }
 
     public override void Connect()

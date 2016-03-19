@@ -8,6 +8,8 @@ using System.Collections;
 [System.Serializable]
 public class TrackData
 {
+    public int trackIdGenerator = Track.trackIdGenerator;
+
     public int curveId;
     public int bifId;
 
@@ -19,6 +21,10 @@ public class TrackData
 [ExecuteInEditMode]
 public class Track : MonoBehaviour
 {
+    public static int trackIdGenerator = 0;
+
+    public int id;
+
     public static string savedDataPath = Application.dataPath + "/ProceduralTracks/CurvesSavedData/";
 
     public float trackWidth = 8.09f;
@@ -59,6 +65,48 @@ public class Track : MonoBehaviour
             Save();
         }
     }
+
+
+    public void AddCurve()
+    {
+        Track trackScript = this;
+
+        if (File.Exists(Track.savedDataPath + "curve" + trackScript.id + trackScript.curveIdGenerator + ".curve"))
+        {
+            File.Delete(Track.savedDataPath + "curve" + trackScript.id + trackScript.curveIdGenerator + ".curve");
+        }
+        GameObject curvePrefab = (GameObject)Resources.Load("CurvePrefab");
+        GameObject go = Instantiate(curvePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        go.name = "curve" + trackScript.id + trackScript.curveIdGenerator;
+        ++trackScript.curveIdGenerator;
+        trackScript.Save();
+        go.transform.parent = trackScript.transform;
+
+
+        Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
+        Selection.activeObject = go;
+    }
+
+
+    public void AddBifurcation()
+    {
+        Track trackScript = this;
+
+        if (File.Exists(Track.savedDataPath + "bifurcation" + trackScript.id + trackScript.bifIdGenerator + ".curve"))
+        {
+            File.Delete(Track.savedDataPath + "bifurcation" + trackScript.id + trackScript.bifIdGenerator + ".curve");
+        }
+        GameObject bifurcationPrefab = (GameObject)Resources.Load("BifurcationPrefab");
+        GameObject go = Instantiate(bifurcationPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        go.name = "bifurcation" + trackScript.id + trackScript.bifIdGenerator;
+        ++trackScript.bifIdGenerator;
+        trackScript.Save();
+        go.transform.parent = trackScript.transform;
+
+        Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
+        Selection.activeObject = go;
+    }
+
 
     void Start()
     {
@@ -176,6 +224,8 @@ public class Track : MonoBehaviour
         data.horizontalDivisions = horizontalDivisions;
         data.divisionsPerCurve = divisionsPerCurve;
 
+       data.trackIdGenerator = Track.trackIdGenerator;
+
         bf.Serialize(file, data);
         file.Close();
     }
@@ -195,6 +245,8 @@ public class Track : MonoBehaviour
             trackWidth = data.trackWidth;
             horizontalDivisions = data.horizontalDivisions;
             divisionsPerCurve = data.divisionsPerCurve;
+
+            Track.trackIdGenerator = data.trackIdGenerator;
         }
     }
 

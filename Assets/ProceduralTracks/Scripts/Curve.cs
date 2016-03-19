@@ -55,6 +55,8 @@ public class Curve : TrackElement
         if(state != lastState)
         {            
             Load();
+            Connect();
+            if (splines != null) Extrude();
         }
         lastState = state;
 
@@ -62,10 +64,11 @@ public class Curve : TrackElement
         if (state == "EditorMode")
         {
             if (nodes != null) Save();
-            if (splines != null) Extrude();
+            //if (splines != null) Extrude();
+            Connect();
         }
 
-        Connect();
+        
     }
 
     public override void Connect()
@@ -118,7 +121,7 @@ public class Curve : TrackElement
     public void Save()
     {
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.dataPath + "/ProceduralTracks/CurvesSavedData/" + gameObject.name + ".curve");        
+        FileStream file = File.Create(Application.dataPath + "/ProceduralTracks/CurvesSavedData/" + gameObject.name + transform.parent.GetComponent<Track>().id + ".curve");        
 
         CurveData data = new CurveData();
 

@@ -116,6 +116,7 @@
     <Compile Include="Assets\ProceduralTracks\Editor\BezierSplineEditor.cs" />
     <Compile Include="Assets\ProceduralTracks\Editor\BifurcationEditor.cs" />
     <Compile Include="Assets\ProceduralTracks\Editor\CurveEditor.cs" />
+    <Compile Include="Assets\ProceduralTracks\Editor\TrackEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ArtAssets\Don&apos;t add this folder to git.txt" />
