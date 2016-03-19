@@ -4,14 +4,14 @@ using System.Collections.Generic;
 public abstract class TrackElement : MonoBehaviour
 {
     // for making paths
-    public bool north_south = false;
-    public bool north_east = false;
-    public bool north_west = false;
+    //public bool north_south = false;
+    //public bool north_east = false;
+    //public bool north_west = false;
 
-    public bool south_east = false;
-    public bool south_west = false;
+    //public bool south_east = false;
+    //public bool south_west = false;
 
-    public bool east_west = false;
+    //public bool east_west = false;
     //-----------------
 
     public TrackElement previousCurve;

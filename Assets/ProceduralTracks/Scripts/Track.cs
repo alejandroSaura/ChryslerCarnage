@@ -62,7 +62,7 @@ public class Track : MonoBehaviour
 
     void Start()
     {
-        SetPath("south_east");
+        SetPath("east_west");
     }
 
     public void RemovePath()
