@@ -41,7 +41,7 @@ public class ExtrudeShape
             curvedVerts[i] = new Vector2(x, y);
             angle -= (Mathf.PI / 2) / divisions;
         }
-        curvedVerts[divisions + 1] = curvedVerts[divisions] + new Vector2(0, 0.25f);
+        curvedVerts[divisions + 1] = curvedVerts[divisions] + new Vector2(-0.25f, 0);
 
         //curvedVerts = new Vector2[divisions + 1];
         //for (int i = 0; i < divisions + 1; ++i)

@@ -25,7 +25,7 @@ public class MenuExtension : MonoBehaviour
     }
 
 
-    [MenuItem("Track/ReCreateGeometry _e")]
+    [MenuItem("Track/ReCreateGeometry _q")]
     static void FirstCommand()
     {
         Debug.Log("Recreating geometry");
