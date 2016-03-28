@@ -373,15 +373,16 @@ public class PhysicsWheel : MonoBehaviour
         }
 
         HingeJoint joint = gameObject.GetComponent<HingeJoint>();
-        Vector3 forward = joint.transform.forward;
-        //if (scaleX < 0) forward = Quaternion.Euler(0, 180, 0) * forward;
-        
-        steeringBone.LookAt(steeringBone.transform.position + forward, joint.transform.right);
-        if (scaleX < 0)
+        if (joint != null)
         {
-            Vector3 rot = steeringBone.transform.localRotation.eulerAngles;
-            rot.y *= -1;
-            steeringBone.transform.localRotation = Quaternion.Euler(rot);
+            Vector3 forward = joint.transform.forward;
+            steeringBone.LookAt(steeringBone.transform.position + forward, joint.transform.right);
+            if (scaleX < 0)
+            {
+                Vector3 rot = steeringBone.transform.localRotation.eulerAngles;
+                rot.y *= -1;
+                steeringBone.transform.localRotation = Quaternion.Euler(rot);
+            }
         }
     }
 
