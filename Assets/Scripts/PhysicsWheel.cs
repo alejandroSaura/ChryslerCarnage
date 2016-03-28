@@ -33,6 +33,7 @@ public class PhysicsWheel : MonoBehaviour
     public Rigidbody body;
     public Transform steeringBone = null;
     public Transform wheelGeometry = null;
+    public int scaleX = 1;
 
 
 
@@ -282,6 +283,8 @@ public class PhysicsWheel : MonoBehaviour
             if (wheelGeometry != null)
                 wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
 
+            
+
             #endregion
 
             // final slipRatio calculus
@@ -318,10 +321,10 @@ public class PhysicsWheel : MonoBehaviour
         if (joint != null)
         {
             JointSpring spring = joint.spring;
-            spring.targetPosition = Mathf.Lerp(spring.targetPosition, wheelSteerAngleTarget, Time.deltaTime*3);
+            spring.targetPosition = Mathf.Lerp(spring.targetPosition, wheelSteerAngleTarget, Time.deltaTime*10);
             joint.spring = spring;
         }
-
+        
         #endregion
 
         #region animation
@@ -367,6 +370,18 @@ public class PhysicsWheel : MonoBehaviour
         if (wheelAnimator != null)
         {
             wheelAnimator.Play(Animator.StringToHash("UpDown"), 0, 1 - wheelHeight);
+        }
+
+        HingeJoint joint = gameObject.GetComponent<HingeJoint>();
+        Vector3 forward = joint.transform.forward;
+        //if (scaleX < 0) forward = Quaternion.Euler(0, 180, 0) * forward;
+        
+        steeringBone.LookAt(steeringBone.transform.position + forward, joint.transform.right);
+        if (scaleX < 0)
+        {
+            Vector3 rot = steeringBone.transform.localRotation.eulerAngles;
+            rot.y *= -1;
+            steeringBone.transform.localRotation = Quaternion.Euler(rot);
         }
     }
 

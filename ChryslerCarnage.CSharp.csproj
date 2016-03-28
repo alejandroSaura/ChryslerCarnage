@@ -69,6 +69,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CameraController.cs" />
+    <Compile Include="Assets\CameraPivotController.cs" />
     <Compile Include="Assets\DebugDrawingExtension\DebugExtension.cs" />
     <Compile Include="Assets\DebugDrawingExtension\Example\Example.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\BezierSpline.cs" />

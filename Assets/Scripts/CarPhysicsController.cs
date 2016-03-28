@@ -50,6 +50,15 @@ public class CarPhysicsController : MonoBehaviour
     PhysicsWheel backLeftWheel;
     PhysicsWheel backRightWheel;
 
+    public Transform frontLeftWheelGeometry;
+    public Transform frontRightWheelGeometry;
+    public Transform backLeftWheelGeometry;
+    public Transform backRightWheelGeometry;
+
+    public Transform rightSteeringBone;
+    public Transform leftSteeringBone;
+
+
     // Axis
     Transform FrontAxisRight;
     Transform FrontAxisLeft;
@@ -114,14 +123,22 @@ public class CarPhysicsController : MonoBehaviour
         backLeftWheel.wheelAnimator = transform.FindChild("l_backWheel_system").GetComponent<Animator>();
         backRightWheel.wheelAnimator = transform.FindChild("r_backWheel_system").GetComponent<Animator>();
 
-        frontLeftWheel.steeringBone = transform.FindChild("l_frontWheel_system").FindChild("joint2");
-        frontRightWheel.steeringBone = transform.FindChild("r_frontWheel_system").FindChild("joint2");
+        //frontLeftWheel.steeringBone = transform.FindChild("l_frontWheel_system").FindChild("joint2");
+        //frontRightWheel.steeringBone = transform.FindChild("r_frontWheel_system").FindChild("joint2");
 
-        frontLeftWheel.wheelGeometry = transform.FindChild("l_frontWheel_system").transform.FindChild("wheelGeometry");
-        frontRightWheel.wheelGeometry = transform.FindChild("r_frontWheel_system").transform.FindChild("wheelGeometry");
-        backLeftWheel.wheelGeometry = transform.FindChild("l_backWheel_system").transform.FindChild("wheelGeometry");
-        backRightWheel.wheelGeometry = transform.FindChild("r_backWheel_system").transform.FindChild("wheelGeometry");
+        frontLeftWheel.steeringBone = leftSteeringBone;
+        frontRightWheel.steeringBone = rightSteeringBone;
 
+        //frontLeftWheel.wheelGeometry = transform.FindChild("l_frontWheel_system").transform.FindChild("wheelGeometry");
+        //frontRightWheel.wheelGeometry = transform.FindChild("r_frontWheel_system").transform.FindChild("wheelGeometry");
+        //backLeftWheel.wheelGeometry = transform.FindChild("l_backWheel_system").transform.FindChild("wheelGeometry");
+        //backRightWheel.wheelGeometry = transform.FindChild("r_backWheel_system").transform.FindChild("wheelGeometry");
+
+        frontLeftWheel.wheelGeometry = frontLeftWheelGeometry;
+        frontRightWheel.wheelGeometry = frontRightWheelGeometry;
+        frontRightWheel.scaleX = -1;
+        backLeftWheel.wheelGeometry = backLeftWheelGeometry;
+        backRightWheel.wheelGeometry = backRightWheelGeometry;
 
         distanceBetweenWheels = (transform.parent.FindChild("FrontLeftWheel").position - transform.parent.FindChild("FrontRightWheel").position).magnitude;
 
