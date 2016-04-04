@@ -1,0 +1,188 @@
+fileFormatVersion: 2
+guid: 426b5ed54521b2a47b79fb513f3fc5e4
+timeCreated: 1459791409
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: backAxis_low
+    100002: chasis_low
+    100004: drivingWheel_low
+    100006: engine_low
+    100008: fender_low
+    100010: frontAxel_low
+    100012: frontBumber_low
+    100014: frontPanel_low
+    100016: hood_low
+    100018: l_backMesh_low
+    100020: l_backWing_low
+    100022: l_door_low
+    100024: l_sideWing_low
+    100026: lowerBody_low
+    100028: lowerEngine_low
+    100030: //RootNode
+    100032: pedals_low
+    100034: r_backMesh_low
+    100036: r_backWing_low
+    100038: r_door_low
+    100040: r_sideWing_low
+    100042: seat_low
+    100044: upperHood_low
+    100046: windows_low
+    400000: backAxis_low
+    400002: chasis_low
+    400004: drivingWheel_low
+    400006: engine_low
+    400008: fender_low
+    400010: frontAxel_low
+    400012: frontBumber_low
+    400014: frontPanel_low
+    400016: hood_low
+    400018: l_backMesh_low
+    400020: l_backWing_low
+    400022: l_door_low
+    400024: l_sideWing_low
+    400026: lowerBody_low
+    400028: lowerEngine_low
+    400030: //RootNode
+    400032: pedals_low
+    400034: r_backMesh_low
+    400036: r_backWing_low
+    400038: r_door_low
+    400040: r_sideWing_low
+    400042: seat_low
+    400044: upperHood_low
+    400046: windows_low
+    2300000: backAxis_low
+    2300002: chasis_low
+    2300004: drivingWheel_low
+    2300006: engine_low
+    2300008: fender_low
+    2300010: frontAxel_low
+    2300012: frontBumber_low
+    2300014: frontPanel_low
+    2300016: hood_low
+    2300018: l_backMesh_low
+    2300020: l_backWing_low
+    2300022: l_door_low
+    2300024: l_sideWing_low
+    2300026: lowerBody_low
+    2300028: lowerEngine_low
+    2300030: pedals_low
+    2300032: r_backMesh_low
+    2300034: r_backWing_low
+    2300036: r_door_low
+    2300038: r_sideWing_low
+    2300040: seat_low
+    2300042: upperHood_low
+    2300044: windows_low
+    3300000: backAxis_low
+    3300002: chasis_low
+    3300004: drivingWheel_low
+    3300006: engine_low
+    3300008: fender_low
+    3300010: frontAxel_low
+    3300012: frontBumber_low
+    3300014: frontPanel_low
+    3300016: hood_low
+    3300018: l_backMesh_low
+    3300020: l_backWing_low
+    3300022: l_door_low
+    3300024: l_sideWing_low
+    3300026: lowerBody_low
+    3300028: lowerEngine_low
+    3300030: pedals_low
+    3300032: r_backMesh_low
+    3300034: r_backWing_low
+    3300036: r_door_low
+    3300038: r_sideWing_low
+    3300040: seat_low
+    3300042: upperHood_low
+    3300044: windows_low
+    4300000: l_sideWing_low
+    4300002: r_sideWing_low
+    4300004: frontBumber_low
+    4300006: frontAxel_low
+    4300008: hood_low
+    4300010: upperHood_low
+    4300012: l_door_low
+    4300014: r_door_low
+    4300016: chasis_low
+    4300018: lowerBody_low
+    4300020: drivingWheel_low
+    4300022: pedals_low
+    4300024: windows_low
+    4300026: frontPanel_low
+    4300028: seat_low
+    4300030: lowerEngine_low
+    4300032: engine_low
+    4300034: backAxis_low
+    4300036: fender_low
+    4300038: l_backMesh_low
+    4300040: l_backWing_low
+    4300042: r_backWing_low
+    4300044: r_backMesh_low
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

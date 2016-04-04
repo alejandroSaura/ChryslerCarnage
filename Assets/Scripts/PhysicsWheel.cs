@@ -224,8 +224,11 @@ public class PhysicsWheel : MonoBehaviour
             // force calculus
             Vector3 lateralForce = Vector3.zero;
             if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 10)) // high speed turning
-            {                
+            {
                 //lateralForce = direction * sideSlipToForce.Evaluate(sideSlipAngle) * maxLateralForce;
+
+                float driftWeight = 1;
+                if (Input.GetButton("drift") && gameObject.GetComponent<HingeJoint>() == null && Vector3.Angle(velocity, transform.forward) < 30) driftWeight = 0.6f;
 
                 float maxLateralForce =
                     (
@@ -236,6 +239,7 @@ public class PhysicsWheel : MonoBehaviour
                     * latForce_slipFactor 
                     * sideSlipAngleRatio
                     * latForce_velocityFactor
+                    * driftWeight
                     * 0.8f
                     );
 
@@ -290,6 +294,14 @@ public class PhysicsWheel : MonoBehaviour
 
             // final slipRatio calculus
             slipRatio = angularVelocity / (tangentialVelocity / wheelRadius);
+
+
+            // set joint to support soft hits
+            {
+                SoftJointLimitSpring spring = axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring;
+                spring.spring = Mathf.Lerp(spring.spring, 450, Time.deltaTime*5);
+                axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring = spring;
+            }
         }
         else
         {
@@ -311,6 +323,14 @@ public class PhysicsWheel : MonoBehaviour
             }
             if (wheelGeometry != null)
                 wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
+
+            // set joint to support hard hits
+            {
+                SoftJointLimitSpring spring = axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring;
+                spring.spring = Mathf.Lerp(spring.spring, 9999, Time.deltaTime*5);
+                axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring = spring;
+            }
+
             #endregion
         }
 

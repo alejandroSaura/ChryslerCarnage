@@ -5,7 +5,8 @@ public class FollowPath : MonoBehaviour
 {
 
     public BezierSpline startingSpline;
-    public float speed = 1f;
+    public float segmentLength = 0.003f;
+    public float speed = 2f;
 
     float t;
     BezierSpline currentSpline;
@@ -30,29 +31,49 @@ public class FollowPath : MonoBehaviour
 	// This behaviour assumes that the paths has been selected -> All splines has been already marked as path.
 	void Update ()
     {
-        if (!reverse)
+
+        float currentDistance = 0;
+        Vector3 lastPoint = transform.position;
+        Vector3 newPoint = Vector3.zero;
+
+        while (currentDistance <= speed)
         {
-            t += (speed * Time.deltaTime)/currentSpline.length;
-            if (t > 1) ChangeToNextSpline();
 
-            transform.position = currentSpline.GetPoint(t);
-            transform.rotation = currentSpline.GetOrientation(t, Vector3.Lerp(currentSpline.startNode.transform.up, currentSpline.endNode.transform.up, t));
+            if (!reverse)
+            {
+                //t += (speed * Time.deltaTime) / currentSpline.length;
+                t += segmentLength;
+                if (t > 1) ChangeToNextSpline();
 
-            if (Vector3.Dot(transform.forward, lastForward) < 0) transform.rotation *= Quaternion.Euler(0, 180, 0);
-            lastForward = transform.forward;
+                newPoint = currentSpline.GetPoint(t);
+                //transform.rotation = currentSpline.GetOrientation(t, Vector3.Lerp(currentSpline.startNode.transform.up, currentSpline.endNode.transform.up, t));
+
+                if (Vector3.Dot(transform.forward, lastForward) < 0) transform.rotation *= Quaternion.Euler(0, 180, 0);
+                lastForward = transform.forward;
+            }
+            else
+            {
+                //t -= (speed * Time.deltaTime) / currentSpline.length;
+                t -= segmentLength;
+
+                if (t < 0) ChangeToNextSpline();
+
+                newPoint = currentSpline.GetPoint(t);
+                //transform.rotation = currentSpline.GetOrientation(t, Vector3.Lerp(currentSpline.startNode.transform.up, currentSpline.endNode.transform.up, t));
+
+                if (Vector3.Dot(transform.forward, lastForward) < 0) transform.rotation *= Quaternion.Euler(0, 180, 0);
+                lastForward = transform.forward;
+
+            }
+
+            currentDistance += Vector3.Distance(lastPoint, newPoint);
+            lastPoint = newPoint;
+
         }
-        else
-        {
-            t -= (speed * Time.deltaTime) / currentSpline.length;
-            if (t < 0) ChangeToNextSpline();
 
-            transform.position = currentSpline.GetPoint(t);
-            transform.rotation = currentSpline.GetOrientation(t, Vector3.Lerp(currentSpline.startNode.transform.up, currentSpline.endNode.transform.up, t));
-
-            if (Vector3.Dot(transform.forward, lastForward) < 0) transform.rotation *= Quaternion.Euler(0, 180, 0);
-            lastForward = transform.forward;
-
-        }
+        transform.position = newPoint;
+        transform.rotation = currentSpline.GetOrientation(t, Vector3.Lerp(currentSpline.startNode.transform.up, currentSpline.endNode.transform.up, t));
+        
     }
 
     void ChangeToNextSpline()
