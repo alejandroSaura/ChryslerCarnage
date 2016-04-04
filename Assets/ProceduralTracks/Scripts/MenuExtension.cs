@@ -16,6 +16,7 @@ public class MenuExtension : MonoBehaviour
             track.AddComponent<Track>();
             track.AddComponent<MeshRenderer>();
             track.AddComponent<MeshCollider>();
+            track.AddComponent<MeshExporter>();
 
             if (!AssetDatabase.IsValidFolder(Track.savedDataPath.Remove(Track.savedDataPath.Length - 1)))
                 Directory.CreateDirectory(Track.savedDataPath.Remove(Track.savedDataPath.Length - 1));

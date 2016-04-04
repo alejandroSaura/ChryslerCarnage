@@ -110,7 +110,7 @@ public class Track : MonoBehaviour
 
     void Start()
     {
-        SetPath("north_south");
+        SetPath("north_east");
     }
 
     public void RemovePath()
@@ -196,7 +196,7 @@ public class Track : MonoBehaviour
          
         transform.GetComponent<MeshFilter>().sharedMesh = new Mesh();
         transform.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine);
-        transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh;
+        transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh;        
     }
 
     public void Save()

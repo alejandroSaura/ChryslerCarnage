@@ -87,6 +87,7 @@
     <Compile Include="Assets\ProceduralTracks\Scripts\TrackElement.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
+    <Compile Include="Assets\Scripts\MeshExporter.cs" />
     <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
     <Compile Include="Assets\Scripts\WheelOld.cs" />

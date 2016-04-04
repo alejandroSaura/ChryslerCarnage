@@ -17,6 +17,13 @@ public class TrackEditor : Editor
         {
             myTrack.AddCurve();
         }
+        if (GUILayout.Button("Export [Only in playmode]"))
+        {
+            // Export .obj mesh
+            if (EditorApplication.isPlaying) myTrack.GetComponent<MeshExporter>().Export();
+        }
+
+        
 
     }
 
