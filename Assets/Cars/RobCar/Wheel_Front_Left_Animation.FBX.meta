@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 4278dcd7d30559544baf0dff1bfa5f42
-timeCreated: 1458401880
+guid: 6950ad17b76d02a44b9077443adb4e62
+timeCreated: 1459777776
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -20,7 +20,7 @@ ModelImporter:
     4300000: Wheel_Front_Left_Bar
     4300002: Wheel_Front_Left
     4300004: Tyre_Front_Left
-    7400000: RobfrontWheelSuspension
+    7400000: Take 001
     9500000: //RootNode
     13700000: Tyre_Front_Left
     13700002: Wheel_Front_Left
@@ -45,47 +45,7 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: RobfrontWheelSuspension
-      takeName: Take 001
-      firstFrame: 20
-      lastFrame: 40
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: Bone_Front_Left_001
-        weight: 1
-      - path: Bone_Front_Left_001/Bone_Front_Left_002
-        weight: 1
-      - path: Wheel_Front_Left_Bar
-        weight: 1
-      - path: Wheel_Front_Left_Bar/Wheel_Front_Left
-        weight: 1
-      - path: Wheel_Front_Left_Bar/Wheel_Front_Left/Tyre_Front_Left
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []

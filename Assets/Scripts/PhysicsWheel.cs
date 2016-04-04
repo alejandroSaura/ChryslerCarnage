@@ -4,6 +4,7 @@ using System.Collections;
 public class PhysicsWheel : MonoBehaviour
 {
     // parameters
+    public bool boneVersion2 = false;
     public AnimationCurve inputSensitivityCurve;
     public float maxLateralForce = 1000;
     public float maxSteerAngle = 35;
@@ -375,12 +376,40 @@ public class PhysicsWheel : MonoBehaviour
         HingeJoint joint = gameObject.GetComponent<HingeJoint>();
         if (joint != null)
         {
-            Vector3 forward = joint.transform.forward;
-            steeringBone.LookAt(steeringBone.transform.position + forward, joint.transform.right);
+            Vector3 forward;
+            if (boneVersion2)
+            {
+                forward = Vector3.Reflect(-joint.transform.forward, body.transform.right);
+                steeringBone.LookAt(steeringBone.transform.position - 3*forward, Quaternion.Euler(0, 0, 5) * body.transform.up);
+
+                //Vector3 rot = steeringBone.transform.rotation.eulerAngles;
+                //rot.y += -joint.transform.localRotation.eulerAngles.y;
+                //steeringBone.transform.rotation = Quaternion.Euler(rot);
+
+                //Vector3 rot = steeringBone.transform.rotation.eulerAngles;
+                //rot.y += -joint.transform.localRotation.eulerAngles.y;
+                //steeringBone.transform.rotation = Quaternion.Euler(rot);
+
+            }
+            else
+            {
+                forward = joint.transform.forward;
+                steeringBone.LookAt(steeringBone.transform.position + forward, joint.transform.right);
+            }
+
+
             if (scaleX < 0)
             {
                 Vector3 rot = steeringBone.transform.localRotation.eulerAngles;
-                rot.y *= -1;
+                if (boneVersion2)
+                {
+                    //rot.x = rot.x + 180;
+                    //rot.y *= -1;
+                }
+                else
+                {
+                    rot.y *= -1;
+                }
                 steeringBone.transform.localRotation = Quaternion.Euler(rot);
             }
         }

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class CameraPivotController : MonoBehaviour
 {
+    public float smoothFactor = 0.4f;
     Transform car;
 
 	// Use this for initialization
@@ -12,8 +13,8 @@ public class CameraPivotController : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void LateUpdate ()
     {
-        transform.forward = car.GetComponent<Rigidbody>().velocity.normalized;
+        transform.forward = Vector3.Lerp(transform.forward, car.GetComponent<Rigidbody>().velocity, Time.deltaTime * smoothFactor);
 	}
 }
