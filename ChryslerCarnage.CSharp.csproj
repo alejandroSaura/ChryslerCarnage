@@ -85,6 +85,8 @@
     <Compile Include="Assets\ProceduralTracks\Scripts\SerializableStructures.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\Track.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\TrackElement.cs" />
+    <Compile Include="Assets\Scripts\AI\AICarMovement.cs" />
+    <Compile Include="Assets\Scripts\AI\carPathMover.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />

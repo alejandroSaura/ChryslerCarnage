@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [System.Serializable]
 public struct BezierData
@@ -132,6 +133,42 @@ public class BezierSpline : MonoBehaviour
         Vector3 tangent = GetTangent(t);
         Vector3 binormal = Vector3.Cross(up, tangent);
         return Vector3.Cross(tangent, binormal).normalized;
+
+    }
+
+    public Vector3 GetClosestPoint(Vector3 evaluatedPoint, float step)
+    {
+        float sqrDistance = float.MaxValue;
+        float previousSqrDistance = float.MaxValue;
+
+        float t = 0;
+        float last_t = 0;
+        Vector3 currentPoint = startNode.position;
+
+        do
+        {
+            previousSqrDistance = sqrDistance;
+            last_t = t;
+
+            t += step;
+            currentPoint = GetPoint(t);
+
+            sqrDistance = Vector3.SqrMagnitude(evaluatedPoint-currentPoint);
+
+        } while (sqrDistance <= previousSqrDistance && t < 1);
+
+        if (t > 1)
+        {// if we are at the end of the spline, the caller should try to call the next spline
+            t = 1;
+            return new Vector3(1, 1, 1);
+        }
+
+        if (last_t == step)
+        {// if we are at the beggining of the spline, the caller should try to call the previous spline
+            return new Vector3(0, 0, 0);
+        }       
+
+        return currentPoint;
 
     }
 

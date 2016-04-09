@@ -50,7 +50,7 @@ public class Track : MonoBehaviour
         if (state != lastState)
         {
             Load();
-            if (state == "PlayMode") StartCoroutine(CombineMeshes());
+            if (state == "PlayMode") //StartCoroutine(CombineMeshes());
             if (state == "EditorMode")
             {
                 ReactivateMeshes();
