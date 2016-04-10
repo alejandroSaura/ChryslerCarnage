@@ -120,6 +120,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ArtAssets\Don&apos;t add this folder to git.txt" />
+    <None Include="Assets\ArtAssets\HelloArtists.txt" />
+    <None Include="Assets\ArtAssets\Tracks\Track.txt" />
     <None Include="Assets\DebugDrawingExtension\readme.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
