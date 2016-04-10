@@ -126,6 +126,55 @@ public class BezierSpline : MonoBehaviour
 
     }
 
+
+    public Vector3 GetDerivative(float t)
+    {
+        if (endNode == null) return Vector3.zero;
+
+        Vector3 p0 = startNode.position;
+        Vector3 p1 = startNode.frontControl;
+        Vector3 p2 = endNode.backControl;
+        Vector3 p3 = endNode.position;
+
+        // Vector between L1' and L2', see GetPoint
+
+        Vector3 result =
+            p0 * (-t * t + 2 * t - 1) +
+            p1 * (3 * t * t - 4 * t + 1) +
+            p2 * (-3 * t * t + 2 * t) +
+            p3 * (t * t);
+
+        return result;
+
+    }
+
+    public Vector3 GetSecondDerivate(float t)
+    {
+        Vector3 p0 = startNode.position;
+        Vector3 p1 = startNode.frontControl;
+        Vector3 p2 = endNode.backControl;
+        Vector3 p3 = endNode.position;
+
+        Vector3 result =
+           p0 * (-2 * t + 2) +
+           p1 * (6 * t - 4) +
+           p2 * (-6 * t + 2) +
+           p3 * (2 * t);
+
+        return result;
+    }
+
+    public Vector3 GetCurvatureRadius(float t)
+    {
+        Vector3 d1 = GetDerivative(t);
+        Vector3 d2 = GetSecondDerivate(t);
+
+        //float r1 = Mathf.Sqrt(Mathf.Pow(d1.x * d1.x + d1.y * d1.y + d1.z * d1.z, 3));
+        //float r2 = Mathf.Abs(d1.x)
+
+        return d2 / d1.magnitude;
+    }
+
     public Vector3 GetNormal(float t, Vector3 up)
     {
         if (endNode == null) return Vector3.zero;
@@ -136,7 +185,7 @@ public class BezierSpline : MonoBehaviour
 
     }
 
-    public Vector3 GetClosestPoint(Vector3 evaluatedPoint, float step)
+    public float GetClosestPoint(Vector3 evaluatedPoint, float step)
     {
         float sqrDistance = float.MaxValue;
         float previousSqrDistance = float.MaxValue;
@@ -160,15 +209,15 @@ public class BezierSpline : MonoBehaviour
         if (t > 1)
         {// if we are at the end of the spline, the caller should try to call the next spline
             t = 1;
-            return new Vector3(1, 1, 1);
+            return 3;
         }
 
         if (last_t == step)
         {// if we are at the beggining of the spline, the caller should try to call the previous spline
-            return new Vector3(0, 0, 0);
-        }       
+            return 2;
+        }
 
-        return currentPoint;
+        return t;
 
     }
 

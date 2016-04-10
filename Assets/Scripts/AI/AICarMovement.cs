@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AICarMovement : InputInterface
-{    
+{
+    public float curvatureWeight = 1000;
 
     public Transform nodeToFollow;
+    Vector3 lastPos;
 
     public float distToNode = 20;
 
@@ -17,14 +19,16 @@ public class AICarMovement : InputInterface
 
     Vector3 maxPos;
     Vector3 minPos;
-    Vector3 offsetPos;
+    public Vector3 offsetPos;
     Vector3 throttlerOffset;
     Vector3 currentPosition;
 
     void Start ()
-    {        
-        Vector3 offsetPos = transform.forward*5;
-	}
+    {
+        //ReallocateNode();
+        lastPos = nodeToFollow.position;
+        offsetPos = Vector3.zero;
+    }
 	
 	void Update ()
     {
@@ -32,15 +36,16 @@ public class AICarMovement : InputInterface
 
         currentSpeed = GetComponent<Rigidbody>().velocity.magnitude * 3.6f;
         Move();
-        steering();
-        offsetPos = new Vector3(0,0,100);
+        steering();        
         throttlerOffset = new Vector3(0, 30, 0);
         maxPos = transform.forward * 10;
-        minPos = transform.position;        
-        
-       //  Debug.DrawLine(transform.position, transform.position + transform.forward * 10 ,Color.blue);
-      //  currentPosition = transform.position;
+        minPos = transform.position;
+
+        //  Debug.DrawLine(transform.position, transform.position + transform.forward * 10 ,Color.blue);
+        //  currentPosition = transform.position;
         //transform.LookAt(path);
+
+        
     }
 
     void OnGUI()
@@ -75,6 +80,7 @@ public class AICarMovement : InputInterface
 
     void steering()
     {
+
         Vector3 steerVector = transform.InverseTransformPoint(new Vector3(nodeToFollow.position.x, transform.position.y, nodeToFollow.position.z));
         float newSteer = (steerVector.x / steerVector.magnitude) * maxSteer;
         
@@ -100,14 +106,22 @@ public class AICarMovement : InputInterface
             //Debug.Log("HIT");
 
             BezierSpline spline = hit.collider.transform.GetComponent<BezierSpline>();
-            if (spline != null) ReallocateNodeOverSpline(spline);
+            if (spline != null) ReallocateNodeOverSpline(nodeToFollow, spline, 0);
 
-        }
+        }        
+
+        // Offset action
+        offsetPos = Vector3.Lerp(offsetPos, Vector3.Project((lastPos - nodeToFollow.position), nodeToFollow.right), Time.deltaTime * 2);
+        if (Mathf.Abs(offsetPos.magnitude) > 30) offsetPos = Vector3.zero;
+
+        lastPos = nodeToFollow.position;
+
+        nodeToFollow.position += offsetPos * curvatureWeight;
     }
 
-    void ReallocateNodeOverSpline(BezierSpline spline)
+    void ReallocateNodeOverSpline(Transform node, BezierSpline spline, int depth)
     {
-        Vector3 newPosition;
+        float newPosition;
 
         // Collide with spline that can belong to 2 possible objects, biffurcation or curve
         Curve curve = spline.transform.parent.GetComponent<Curve>();
@@ -120,38 +134,61 @@ public class AICarMovement : InputInterface
 
         if (bifurcation != null)
         {// we are in a bifurcation
-            if (!spline.isPath)
-            {
-                if (bifurcation.splines[0] == spline) spline = bifurcation.splines[1];
-                if (bifurcation.splines[1] == spline) spline = bifurcation.splines[0];
 
-            }
+            if (bifurcation.splines[0].isPath) spline = bifurcation.splines[0];
+            else spline = bifurcation.splines[1];            
         }
 
-        newPosition = spline.GetClosestPoint(transform.position + transform.forward * distToNode, 0.0001f);
-        nodeToFollow.position = newPosition;
+        newPosition = spline.GetClosestPoint(transform.position + transform.forward * distToNode, 0.001f);
+        nodeToFollow.position = spline.GetPoint(newPosition);
+        nodeToFollow.rotation = spline.GetOrientation(newPosition, transform.up);
 
         // end or beggining of spline reached, check next/previous spline
-        if (newPosition == Vector3.zero)
+        if (newPosition == 2)
         {// jump to previous spline
-            RaycastHit hit;
-            if (Physics.Raycast(spline.startNode.position - spline.startNode.transform.forward + new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
-            {
-                spline = hit.collider.transform.GetComponent<BezierSpline>();
-            }
-            ReallocateNodeOverSpline(spline);
-        }
-        if (newPosition == new Vector3(1,1,1))
-        {// jump to next spline
-            RaycastHit hit;
-            if (Physics.Raycast(spline.endNode.position + spline.endNode.transform.forward + new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
-            {
-                spline = hit.collider.transform.GetComponent<BezierSpline>();
-            }
-            ReallocateNodeOverSpline(spline);
-        }
 
-        
+            if (depth == 1)
+            {// avoid infinite recursive loops
+                nodeToFollow.position = spline.startNode.transform.position;
+                nodeToFollow.rotation = spline.startNode.transform.rotation;
+                return;
+            }
+
+            RaycastHit hit;
+
+            Vector3 dir = -spline.startNode.transform.forward;
+            //if (spline.startNode.reverse == true) dir *= -1;
+
+            if (Physics.Raycast(spline.startNode.position + dir + new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
+            {
+                spline = hit.collider.transform.GetComponent<BezierSpline>();
+            }
+            ReallocateNodeOverSpline(nodeToFollow, spline, 1);
+        }
+        if (newPosition == 3)
+        {// jump to next spline
+
+            if (depth == 1)
+            {// avoid infinite recursive loops
+                nodeToFollow.position = spline.endNode.transform.position;
+                nodeToFollow.rotation = spline.endNode.transform.rotation;
+                return;
+            }                 
+
+            RaycastHit hit;
+
+            Vector3 dir = spline.endNode.transform.forward;
+            //if (spline.endNode.reverse == true)
+            //    dir *= -1;
+
+            if (Physics.Raycast(spline.endNode.position + dir + new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
+            {
+                spline = hit.collider.transform.GetComponent<BezierSpline>();
+            }
+
+            ReallocateNodeOverSpline(nodeToFollow, spline, 1);
+        } 
+
     }
 
 
