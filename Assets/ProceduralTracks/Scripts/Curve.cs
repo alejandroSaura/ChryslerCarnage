@@ -329,5 +329,81 @@ public class Curve : TrackElement
 
     }
 
+
+    public void Split(BezierSpline splitSpline)
+    {
+        Debug.Log("Splitting curve");
+
+        // splines split
+        List<BezierSpline> firstSplines, secondSplines;
+        firstSplines = new List<BezierSpline>();
+        secondSplines = new List<BezierSpline>();
+        // meshes split
+        List<Mesh> firstMeshes, secondMeshes;
+        firstMeshes = new List<Mesh>();
+        secondMeshes = new List<Mesh>();
+
+        int splitPoint = splines.IndexOf(splitSpline);
+        for (int i = 0; i < splines.Count; ++i)
+        {
+            if (i < splitPoint)
+            {
+                firstSplines.Add(splines[i]);
+                firstMeshes.Add(meshes[i]);
+            }
+            else
+            {
+                secondSplines.Add(splines[i]);
+                secondMeshes.Add(meshes[i]);
+            }
+        }
+
+        // nodes split
+        List<Node> firstNodes, secondNodes;
+        firstNodes = new List<Node>();
+        secondNodes = new List<Node>();
+
+        for (int i = 0; i < nodes.Count; ++i)
+        {
+            if (i < splitPoint+1) firstNodes.Add(nodes[i]);
+            else secondNodes.Add(nodes[i]);
+        }
+        // Create new node in the splitting point
+        Node newNode = CreateNode(Vector3.zero, Quaternion.identity);
+        newNode.Copy(firstNodes[firstNodes.Count - 1]);
+        secondNodes.Insert(0, newNode);
+        // update first spline of the second group with the new node as start
+        secondSplines[0].startNode = newNode; 
+
+
+        // Create new curve
+        Curve newCurve = GetComponentInParent<Track>().AddCurve();
+        newCurve.ClearCurve();
+        newCurve.transform.position = firstNodes[firstNodes.Count - 1].transform.position;
+        newCurve.transform.rotation = firstNodes[firstNodes.Count - 1].transform.rotation;
+
+        // reassignment
+        newCurve.nodes = secondNodes;
+        newCurve.splines = secondSplines;
+        newCurve.meshes = secondMeshes;
+
+        nodes = firstNodes;
+        splines = firstSplines;
+        meshes = firstMeshes;
+
+        // reparent
+        for (int i = 0; i < newCurve.splines.Count; ++i)
+        {
+            newCurve.splines[i].transform.parent = newCurve.transform;
+        }
+        for (int i = 0; i < newCurve.nodes.Count; ++i)
+        {
+            newCurve.nodes[i].transform.parent = newCurve.transform;
+        }
+
+        
+
+    }
+
         
 }
