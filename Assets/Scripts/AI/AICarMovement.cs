@@ -101,7 +101,7 @@ public class AICarMovement : InputInterface
     void ReallocateNode()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + transform.forward*2+ new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
+        if (Physics.Raycast(transform.position + transform.forward*2f+ new Vector3(0, 2, 0), -transform.up, out hit, 30))
         {
             //Debug.Log("HIT");
 
@@ -139,7 +139,7 @@ public class AICarMovement : InputInterface
             else spline = bifurcation.splines[1];            
         }
 
-        newPosition = spline.GetClosestPoint(transform.position + transform.forward * distToNode, 0.001f);
+        newPosition = spline.GetClosestPoint(transform.position + transform.forward * distToNode, 0.01f);
         nodeToFollow.position = spline.GetPoint(newPosition);
         nodeToFollow.rotation = spline.GetOrientation(newPosition, transform.up);
 
@@ -159,7 +159,7 @@ public class AICarMovement : InputInterface
             Vector3 dir = -spline.startNode.transform.forward;
             //if (spline.startNode.reverse == true) dir *= -1;
 
-            if (Physics.Raycast(spline.startNode.position + dir + new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
+            if (Physics.Raycast(spline.startNode.position + dir + new Vector3(0, 2, 0), -transform.up, out hit, 30))
             {
                 spline = hit.collider.transform.GetComponent<BezierSpline>();
             }
@@ -181,7 +181,7 @@ public class AICarMovement : InputInterface
             //if (spline.endNode.reverse == true)
             //    dir *= -1;
 
-            if (Physics.Raycast(spline.endNode.position + dir + new Vector3(0, 2, 0), -Vector3.up, out hit, 30))
+            if (Physics.Raycast(spline.endNode.position + dir + new Vector3(0, 2, 0), -transform.up, out hit, 30))
             {
                 spline = hit.collider.transform.GetComponent<BezierSpline>();
             }

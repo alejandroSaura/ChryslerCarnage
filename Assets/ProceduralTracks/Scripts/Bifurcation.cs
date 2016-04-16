@@ -50,7 +50,7 @@ public class Bifurcation : TrackElement
         }
         if (state != lastState)
         {            
-            Load();
+            //Load();
             Connect();
             if (splines != null) Extrude();
         }
