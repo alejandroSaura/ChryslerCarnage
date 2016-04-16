@@ -49,7 +49,7 @@ public class BezierSpline : MonoBehaviour
     {
         length = GetLength();
     }
-    
+
     public BezierData GetData()
     {
         BezierData data;
@@ -202,7 +202,7 @@ public class BezierSpline : MonoBehaviour
             t += step;
             currentPoint = GetPoint(t);
 
-            sqrDistance = Vector3.SqrMagnitude(evaluatedPoint-currentPoint);
+            sqrDistance = Vector3.SqrMagnitude(evaluatedPoint - currentPoint);
 
         } while (sqrDistance <= previousSqrDistance && t < 1);
 
@@ -248,7 +248,7 @@ public class BezierSpline : MonoBehaviour
 
         float segmentLength = 1.0f / (float)numTracersDebug;
         Vector3 start = startNode.position;
-        for (int i = 1; i < numTracersDebug+1; ++i)
+        for (int i = 1; i < numTracersDebug + 1; ++i)
         {
             Vector3 end = GetPoint(i * segmentLength);
             Gizmos.DrawLine(start, end);
@@ -262,7 +262,7 @@ public class BezierSpline : MonoBehaviour
             //    DebugExtension.DebugArrow(start, GetBinormal(i * segmentLength, up), Color.red);
             //}          
 
-            
+
 
             start = end;
         }
@@ -287,7 +287,7 @@ public class BezierSpline : MonoBehaviour
         for (int i = 1; i < numChords + 1; ++i)
         {
             Vector3 end = GetPoint(i * chordLength);
-            length += Vector3.Distance(start, end);            
+            length += Vector3.Distance(start, end);
 
             start = end;
         }
@@ -299,14 +299,14 @@ public class BezierSpline : MonoBehaviour
         if (shape == null) shape = new ExtrudeShape();
 
         float splineLength = GetLength();
-        shape.Initialize(1, curve.horizontalDivisions);        
+        shape.Initialize(1, curve.horizontalDivisions);
 
         int divisions = (int)(curve.divisionsPerCurve * splineLength / curve.trackWidth / 20);
         if (divisions < 1) divisions = 1;
         int vertsInShape = shape.verts.Length;
 
         List<int> triangleIndices = new List<int>(); //new int[triIndexCount];
-        List <Vector3> vertices = new List<Vector3>();  //new Vector3[vertCount];
+        List<Vector3> vertices = new List<Vector3>();  //new Vector3[vertCount];
         List<Vector3> normals = new List<Vector3>(); //new Vector3[vertCount];
         List<Vector2> uvs = new List<Vector2>(); //new Vector2[vertCount];
 
@@ -328,12 +328,12 @@ public class BezierSpline : MonoBehaviour
 
             Vector3 up = Vector3.Lerp(startNode.transform.up, endNode.transform.up, t);
             float curvature = Mathf.Lerp(startNode.rightCurvature, endNode.rightCurvature, t);
-            float width = (curve.trackWidth + Mathf.Lerp(startNode.trackWidthModifier, endNode.trackWidthModifier, t))/2;
-            Matrix4x4 scale = Matrix4x4.Scale(new Vector3(width, width, width));            
+            float width = (curve.trackWidth + Mathf.Lerp(startNode.trackWidthModifier, endNode.trackWidthModifier, t)) / 2;
+            Matrix4x4 scale = Matrix4x4.Scale(new Vector3(width, width, width));
 
             // Initialize oriented point
             orientedPoints[i].position = transform.InverseTransformPoint(GetPoint(t));
-            orientedPoints[i].rotation =  Quaternion.Inverse(transform.rotation) * (GetOrientation(t, up));
+            orientedPoints[i].rotation = Quaternion.Inverse(transform.rotation) * (GetOrientation(t, up));
             orientedPoints[i].scale = scale;
 
             for (int j = 0; j < vertsInShape; ++j)
@@ -346,8 +346,8 @@ public class BezierSpline : MonoBehaviour
                 normals.Add(orientedPoints[i].LocalToWorldDirection(normal));
 
                 // u is based on the 2D shape, and v is based on the distance along the curve
-                uvs.Add(new Vector2(shape.us[j], t * splineLength / width));                
-            }            
+                uvs.Add(new Vector2(shape.us[j], t * splineLength / width));
+            }
         }
 
         // Create triangles
@@ -355,7 +355,7 @@ public class BezierSpline : MonoBehaviour
         {// for each division in the curve
             int offset = shape.verts.Length * j;
 
-            for(int k = 0; k < shape.lines.Length; k = k+2)
+            for (int k = 0; k < shape.lines.Length; k = k + 2)
             {//for each 2d line in the shape
                 // triangle 1                
                 triangleIndices.Add(shape.lines[k + 1] + offset);
@@ -365,7 +365,7 @@ public class BezierSpline : MonoBehaviour
                 triangleIndices.Add(shape.lines[k + 1] + offset);
                 triangleIndices.Add(shape.lines[k] + offset + shape.verts.Length);
                 triangleIndices.Add(shape.lines[k + 1] + offset + shape.verts.Length);
-                                
+
             }
 
         }
@@ -391,7 +391,7 @@ public class BezierSpline : MonoBehaviour
                 Vector2 vertex = Vector2.Lerp(shape.verts[j], shape.curvedVerts[j], curvature);
                 vertex.x *= -1;
                 Vector2 normal = Vector2.Lerp(shape.normals[j], shape.curvedNormals[j], curvature);
-                
+
 
                 vertices.Add(orientedPoints[i].LocalToWorld(vertex));
                 normals.Add(orientedPoints[i].LocalToWorldDirection(normal));
@@ -405,7 +405,7 @@ public class BezierSpline : MonoBehaviour
         // Create triangles
         for (int j = 0; j < divisions; ++j)
         {// for each division in the curve
-            int offset = shape.verts.Length * j;           
+            int offset = shape.verts.Length * j;
 
             for (int k = 0; k < shape.lines.Length; k = k + 2)
             {//for each 2d line in the shape
@@ -458,7 +458,7 @@ public class BezierSpline : MonoBehaviour
         List<Vector2> uvs = new List<Vector2>();
         mesh.GetUVs(0, uvs); //new Vector2[vertCount];
 
-        List < Vector3 > newVertices = new List<Vector3>();
+        List<Vector3> newVertices = new List<Vector3>();
         List<Vector3> newNormals = new List<Vector3>();
         List<Vector2> newUVs = new List<Vector2>();
         List<int> newIndices = new List<int>();
@@ -470,15 +470,15 @@ public class BezierSpline : MonoBehaviour
             List<int> side1 = new List<int>();
             List<int> side2 = new List<int>();
 
-            
+
             if (splineCoordsToNode(vertices[triangleIndices[i]]).x > planeX) side2.Add(triangleIndices[i]);
             else side1.Add(triangleIndices[i]);
             if (splineCoordsToNode(vertices[triangleIndices[i + 1]]).x > planeX) side2.Add(triangleIndices[i + 1]);
             else side1.Add(triangleIndices[i + 1]);
             if (splineCoordsToNode(vertices[triangleIndices[i + 2]]).x > planeX) side2.Add(triangleIndices[i + 2]);
             else side1.Add(triangleIndices[i + 2]);
-           
-            
+
+
 
             // Depending on the side evaluated determine wich vertices are in and which out
             List<int> inside;
@@ -503,8 +503,8 @@ public class BezierSpline : MonoBehaviour
             {
                 // discard triangle
                 triangleIndices[i] = triangleIndices[i + 1] = triangleIndices[i + 2] = 0;
-                
-                if(outside.Count == 2)
+
+                if (outside.Count == 2)
                 {// case 1: 1 vertices in, 2 out. Create 2 more vertices and one tri.
 
                     Vector3 v1 = Intersection(vertices[inside[0]], vertices[outside[0]], normal, position);
@@ -527,11 +527,11 @@ public class BezierSpline : MonoBehaviour
                     else
                     {
                         newIndices.Add(vertices.Length + newVertices.IndexOf(v1));
-                        newIndices.Add(inside[0]);                        
-                        newIndices.Add(vertices.Length + newVertices.IndexOf(v2));                        
+                        newIndices.Add(inside[0]);
+                        newIndices.Add(vertices.Length + newVertices.IndexOf(v2));
                     }
                 }
-                else if(outside.Count == 1)
+                else if (outside.Count == 1)
                 {// case 2: 2 vertices in, 1 out. create 2 more vertices and 2 tris.
 
                     Vector3 v1 = Intersection(vertices[inside[0]], vertices[outside[0]], normal, position);
@@ -558,7 +558,7 @@ public class BezierSpline : MonoBehaviour
                     else
                     {
                         newIndices.Add(vertices.Length + newVertices.IndexOf(v1));
-                        newIndices.Add(inside[0]);                        
+                        newIndices.Add(inside[0]);
                         newIndices.Add(vertices.Length + newVertices.IndexOf(v2));
 
                         newIndices.Add(inside[0]);
@@ -567,7 +567,7 @@ public class BezierSpline : MonoBehaviour
                     }
                 }
             }
-            
+
         }
 
         vertices = Concat<Vector3>(vertices, newVertices.ToArray());
@@ -596,13 +596,13 @@ public class BezierSpline : MonoBehaviour
     }
 
     public Vector3 Intersection(Vector3 p1, Vector3 p2, Vector3 normal, Vector3 planePoint)
-    {        
+    {
         p1 = startNode.transform.InverseTransformPoint(transform.TransformPoint(p1));
         p2 = startNode.transform.InverseTransformPoint(transform.TransformPoint(p2));
 
         float u = (Vector3.Dot(normal, planePoint - p1)) / (Vector3.Dot(normal, p2 - p1));
 
-        Vector3 point = p1 + u*(p2 - p1);
+        Vector3 point = p1 + u * (p2 - p1);
         point = transform.InverseTransformPoint(startNode.transform.TransformPoint(point));
         return point;
     }
@@ -614,7 +614,7 @@ public class BezierSpline : MonoBehaviour
 
         int factor = 1;
         if (side == "left") factor = -1;
-        
+
 
         float splineLength = GetLength();
         shape.Initialize(1, curve.horizontalDivisions);
@@ -688,11 +688,11 @@ public class BezierSpline : MonoBehaviour
                 {
                     // triangle 1     
                     triangleIndices.Add(shape.lines[k] + offset);
-                    triangleIndices.Add(shape.lines[k + 1] + offset);                    
+                    triangleIndices.Add(shape.lines[k + 1] + offset);
                     triangleIndices.Add(shape.lines[k] + offset + shape.verts.Length);
                     // triangle 2
                     triangleIndices.Add(shape.lines[k] + offset + shape.verts.Length);
-                    triangleIndices.Add(shape.lines[k + 1] + offset);                    
+                    triangleIndices.Add(shape.lines[k + 1] + offset);
                     triangleIndices.Add(shape.lines[k + 1] + offset + shape.verts.Length);
                 }
             }
@@ -706,7 +706,7 @@ public class BezierSpline : MonoBehaviour
 
         #endregion
 
-        mesh.RecalculateNormals();      
+        mesh.RecalculateNormals();
 
         gameObject.GetComponent<MeshFilter>().mesh = mesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
@@ -716,7 +716,7 @@ public class BezierSpline : MonoBehaviour
     {
         Quaternion orientation = GetOrientation(0.5f, Vector3.Lerp(startNode.transform.up, endNode.transform.up, 0.5f));
         Vector3 position = GetPoint(0.5f);
-        
+
         // new intermediate node creation, taking care of inserting it in the correct position    
         //Node newNode = curve.CreateNode(position, orientation);
         GameObject nodeGO = Instantiate(curve.nodePrefab, position, orientation) as GameObject;
@@ -735,8 +735,14 @@ public class BezierSpline : MonoBehaviour
 
         // Make sure that its removed from the curve list and eliminate the associated mesh
         curve.meshes.RemoveAt(curve.splines.IndexOf(this));
-        curve.splines.Remove(this);        
+        curve.splines.Remove(this);
         DestroyImmediate(this.gameObject);
+    }
+
+    public void SplitCurve()
+    {
+        if(curve.GetType() == typeof(Curve))
+            ((Curve)curve).Split(this);
     }
 
 }

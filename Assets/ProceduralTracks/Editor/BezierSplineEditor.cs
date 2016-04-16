@@ -12,11 +12,15 @@ public class BezierSplineEditor : Editor
         DrawDefaultInspector();
 
         BezierSpline spline = (BezierSpline)target;
-        if (GUILayout.Button("Split"))
+        if (GUILayout.Button("SplitSpline"))
         {
             spline.Split();
         }
-        
+        if (GUILayout.Button("SplitCurve"))
+        {
+            spline.SplitCurve();
+        }
+
     }
 
 }

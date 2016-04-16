@@ -67,7 +67,7 @@ public class Track : MonoBehaviour
     }
 
 
-    public void AddCurve()
+    public Curve AddCurve()
     {
         Track trackScript = this;
 
@@ -85,6 +85,8 @@ public class Track : MonoBehaviour
 
         Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
         Selection.activeObject = go;
+
+        return go.GetComponent<Curve>();
     }
 
 
