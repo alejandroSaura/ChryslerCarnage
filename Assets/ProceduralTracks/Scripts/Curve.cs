@@ -63,7 +63,7 @@ public class Curve : TrackElement
         // On editor: save changes and recreate geometry
         if (state == "EditorMode")
         {
-            if (nodes != null) Save();
+            //if (nodes != null) Save();
             //if (splines != null) Extrude();
             Connect();
         }
@@ -239,7 +239,8 @@ public class Curve : TrackElement
     }
 
     public override void Extrude()
-    {
+    {     
+
         if (invisible)
         {
             for (int i = 0; i < splines.Count; ++i)
