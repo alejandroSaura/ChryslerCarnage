@@ -49,6 +49,8 @@ public class DamageScript : MonoBehaviour {
 
         if (col.gameObject.tag == "Track" || col.gameObject.tag == "Car")
         {
+            print("Points colliding: " + col.contacts.Length);
+            print("First point that collided: " + col.contacts[0].point);
             if (col.relativeVelocity.magnitude > 25)
             {
                 impactAmount = col.relativeVelocity.magnitude * 0.2f;
@@ -74,7 +76,7 @@ public class DamageScript : MonoBehaviour {
                 carObject.SetActive(false);
                 Instantiate(DeathParticle, transform.position, transform.rotation);
                 Instantiate(mainCamera,transform.position,transform.rotation);
-                Debug.Log("Destroyed!");
+               // Debug.Log("Destroyed!");
             }
         }
        // Debug.Log(col.relativeVelocity.magnitude);
