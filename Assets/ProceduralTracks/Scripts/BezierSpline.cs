@@ -296,9 +296,14 @@ public class BezierSpline : MonoBehaviour
 
     public void Extrude(Mesh mesh, ExtrudeShape shape)
     {
+        // Bug fix when scaling the whole track
+        if (curve.transform.localScale.x == 0.5f) transform.localScale = new Vector3(2, 2, 2);
+        if (curve.transform.localScale.x == 1 || curve.transform.localScale.y == 1) transform.localScale = new Vector3(1, 1, 1);
+
         if (shape == null) shape = new ExtrudeShape();
 
         float splineLength = GetLength();
+        if (curve == null) curve = transform.GetComponentInParent<Curve>();
         shape.Initialize(1, curve.horizontalDivisions);
 
         int divisions = (int)(curve.divisionsPerCurve * splineLength / curve.trackWidth / 20);

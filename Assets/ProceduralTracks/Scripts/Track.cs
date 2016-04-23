@@ -201,6 +201,48 @@ public class Track : MonoBehaviour
         transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh;        
     }
 
+
+    public void InstantCombineMeshes()
+    {
+        TrackElement[] elements = GetComponentsInChildren<TrackElement>();
+        int j = 0;
+        while (j < elements.Length)
+        {
+            elements[j].Connect();
+            elements[j].Extrude();
+            j++;
+        }
+
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        int i = 0;
+        while (i < meshFilters.Length)
+        {
+            if (meshFilters[i].gameObject != gameObject)
+            {
+                combine[i].mesh = meshFilters[i].sharedMesh;
+                combine[i].transform = transform.worldToLocalMatrix * (meshFilters[i].transform.localToWorldMatrix);
+                //meshFilters[i].gameObject.SetActive(false);   
+
+                //meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                //meshFilters[i].gameObject.GetComponent<MeshCollider>().enabled = false;
+            }
+            i++;
+        }
+        if (gameObject.GetComponent<MeshFilter>() == null)
+            gameObject.AddComponent<MeshFilter>();
+        if (gameObject.GetComponent<MeshRenderer>() == null)
+            gameObject.AddComponent<MeshRenderer>();
+        gameObject.GetComponent<MeshRenderer>().enabled = true;
+        if (gameObject.GetComponent<MeshCollider>() == null)
+            gameObject.AddComponent<MeshCollider>();
+
+
+        transform.GetComponent<MeshFilter>().sharedMesh = new Mesh();
+        transform.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine);
+        transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh;
+    }
+
     public void Save()
     {
         //Debug.Log("Track ids saved");

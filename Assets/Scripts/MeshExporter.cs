@@ -64,10 +64,10 @@ public class MeshExporter : MonoBehaviour
             meshString.Append(ObjExporterScript.MeshToString(mf, t));
         }
 
-        for (int i = 0; i < t.childCount; i++)
-        {
-            meshString.Append(processTransform(t.GetChild(i), makeSubmeshes));
-        }
+        //for (int i = 0; i < t.childCount; i++)
+        //{
+        //    meshString.Append(processTransform(t.GetChild(i), makeSubmeshes));
+        //}
 
         return meshString.ToString();
     }
