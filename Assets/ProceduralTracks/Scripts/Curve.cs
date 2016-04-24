@@ -54,7 +54,7 @@ public class Curve : TrackElement
         }
         if(state != lastState)
         {            
-            //Load();
+            Load();
             Connect();
             if (splines != null) Extrude();
         }
@@ -63,7 +63,7 @@ public class Curve : TrackElement
         // On editor: save changes and recreate geometry
         if (state == "EditorMode")
         {
-            //if (nodes != null) Save();
+            if (nodes != null) Save();
             //if (splines != null) Extrude();
             Connect();
         }
