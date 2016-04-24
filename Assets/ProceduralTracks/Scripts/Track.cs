@@ -62,7 +62,7 @@ public class Track : MonoBehaviour
         // On editor: save changes and recreate geometry
         if (state == "EditorMode")
         {
-            Save();
+            //Save();
         }
     }
 

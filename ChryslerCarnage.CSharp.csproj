@@ -69,8 +69,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\CameraController.cs" />
-    <Compile Include="Assets\CameraPivotController.cs" />
     <Compile Include="Assets\DebugDrawingExtension\DebugExtension.cs" />
     <Compile Include="Assets\DebugDrawingExtension\Example\Example.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\BezierSpline.cs" />
@@ -86,7 +84,11 @@
     <Compile Include="Assets\ProceduralTracks\Scripts\Track.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\TrackElement.cs" />
     <Compile Include="Assets\Scripts\AI\AICarMovement.cs" />
+    <Compile Include="Assets\Scripts\AI\AICarMovementV2.cs" />
+    <Compile Include="Assets\Scripts\AI\FollowPathV2.cs" />
     <Compile Include="Assets\Scripts\AI\carPathMover.cs" />
+    <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\CameraPivotController.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />
