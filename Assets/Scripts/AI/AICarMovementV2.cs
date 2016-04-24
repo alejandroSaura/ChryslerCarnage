@@ -115,7 +115,7 @@ public class AICarMovementV2 : InputInterface
 
         Debug.Log(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature());
         if (nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature() > 2) //throttleModifier = 1;
-            throttleModifier += Mathf.Clamp(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature(), 0, 1f);
+            throttleModifier += Mathf.Clamp(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature(), 0, 0.6f);
 
     }
 

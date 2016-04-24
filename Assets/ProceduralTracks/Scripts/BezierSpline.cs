@@ -48,6 +48,7 @@ public class BezierSpline : MonoBehaviour
     void Start()
     {
         length = GetLength();
+        curve = GetComponentInParent<TrackElement>();
     }
 
     public BezierData GetData()
@@ -296,7 +297,7 @@ public class BezierSpline : MonoBehaviour
 
     public void Extrude(Mesh mesh, ExtrudeShape shape)
     {
-        if (curve == null) curve = transform.GetComponentInParent<Curve>();
+        if (curve == null) curve = transform.GetComponentInParent<TrackElement>();
 
         // Bug fix when scaling the whole track
         if (curve.transform.localScale.x == 0.5f) transform.localScale = new Vector3(2, 2, 2);

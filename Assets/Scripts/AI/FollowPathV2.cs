@@ -103,6 +103,8 @@ public class FollowPathV2 : MonoBehaviour
         speed += derivate * Time.deltaTime;
         speed = Mathf.Clamp(speed, 0, float.MaxValue);
 
+        if (distanceToObjective < -2) speed = 0.0001f;
+
         previousDistanceToFollower = distanceToObjective;
     }
 
@@ -331,9 +333,18 @@ public class FollowPathV2 : MonoBehaviour
                 }
                 else
                 {// back to a Curve
-                    currentSpline = bifurcation.previousCurve.splines[bifurcation.previousCurve.splines.Count - 1];
-                    reverse = true;
-                    t = t + 1;
+                    if (bifurcation.previousCurve.previousCurve == bifurcation)
+                    { // <--/-->
+                        currentSpline = bifurcation.previousCurve.splines[0];
+                        reverse = false;
+                        t = 1 - (1 - t);
+                    }
+                    else
+                    {
+                        currentSpline = bifurcation.previousCurve.splines[bifurcation.previousCurve.splines.Count - 1];
+                        reverse = true;
+                        t = t + 1;
+                    }
                 }
             }
         }
