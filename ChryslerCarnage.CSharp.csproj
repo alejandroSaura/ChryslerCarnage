@@ -80,6 +80,7 @@
     <Compile Include="Assets\ProceduralTracks\Scripts\Node.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\NodeControl.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\OrientedPoint.cs" />
+    <Compile Include="Assets\ProceduralTracks\Scripts\POI.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\SerializableStructures.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\Track.cs" />
     <Compile Include="Assets\ProceduralTracks\Scripts\TrackElement.cs" />
