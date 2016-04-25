@@ -10,56 +10,38 @@ public class DamageScript : MonoBehaviour {
     public GameObject mainCamera;
     public GameObject carObject;
     private float impactAmount;
-    //public List<SphereCollider> colliderArray;
     public SphereCollider[] colliderArray;
-    //1 - right door
-    //2- left door
-    //3- middle - front
-    //4- left - front
-    //5- right - front
-    //6- back right
-    //7- back left
-	// Use this for initialization
-	void Start () {
+
+    /// <summary>
+    //Sphere collider numbers:
+    //1 - front left
+    //2 - front right
+    //3 - front middle
+    //4 - right door
+    //5 - left door 
+    //6 - back left
+    //7 - back right
+    /// </summary>
+    
+    // Use this for initialization
+    void Start () {
         damagedParticle.SetActive(false);
 	}
 
-
     void OnCollisionEnter(Collision col)
     {
-        //if (col.gameObject.tag == "FrontBumper")
-        //{
-        //    if (col.relativeVelocity.magnitude > 25)
-        //    {
-        //        GameObject.FindGameObjectsWithTag("FrontBumper").SetActive(false);
-        //    }
-        //}
-        //Vector3 dir = (col.gameObject.transform.position - gameObject.transform.position).normalized;
-        //if (Mathf.Abs(dir.z) < 0.05f)
-        //{
-        //    if(dir.x > 0)
-        //    {
-        //        Debug.Log("RIGHT");
-        //    }
-        //    else if (dir.x <0)
-        //    {
-        //        Debug.Log("LEFT");
-        //    }
-        //    else
-        //    {
-        //        if(dir.z >0)
-        //        {
-        //            Debug.Log("FRONT");
-        //        }
-        //        else if (dir.z < 0)
-        //        {
-        //            Debug.Log("BACK");
-        //        }
-        //    }
-        //}
+        foreach (ContactPoint contact in col.contacts)
+        {
+            if (col.collider == colliderArray[0]|| col.collider == colliderArray[1]|| col.collider == colliderArray[2])
+            {
+                Debug.Log("Collided at the front");
+                destroyHood();
+            }
+        }
 
         if (col.gameObject.tag == "Track" || col.gameObject.tag == "Car")
         {
+            
             //print("Points colliding: " + col.contacts.Length);
             //print("First point that collided: " + col.contacts[0].point);
             if (col.relativeVelocity.magnitude > 25)
@@ -79,10 +61,11 @@ public class DamageScript : MonoBehaviour {
                     damagedParticle.SetActive(true);
 
                     //col.collider 
-                    if(col.collider==colliderArray[0])
+                    if(col.collider==colliderArray[0]|| col.collider == colliderArray[1]|| col.collider == colliderArray[2])
                     {
-                        GameObject door = GameObject.FindGameObjectWithTag("DoorRight");
+                        GameObject door = GameObject.FindGameObjectWithTag("RightDoor");
                         door.transform.parent = null;
+                        Debug.Log("COLLISION");
                     }
                 }
             }
@@ -101,7 +84,53 @@ public class DamageScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(Input.GetKeyUp(KeyCode.X))
+            {
+            destroyHood();
+            destroyLeftDoor();
+            destroyRightDoor();
+            destroyBumper();
+        }
         //Debug.Log(carHP);
-      //  Debug.Log(impactAmount);
+        //Debug.Log(impactAmount);
+    }
+    void destroyRightDoor()
+    {
+        GameObject rightDoor = GameObject.FindGameObjectWithTag("RightDoor");
+        Rigidbody rDoorRB = rightDoor.AddComponent<Rigidbody>();
+        BoxCollider doorCollider = rightDoor.AddComponent<BoxCollider>();
+        rDoorRB.mass = 0.01f;
+        rDoorRB.useGravity = true;
+        rightDoor.transform.parent = null;
+
+    }
+    void destroyLeftDoor()
+    {
+        GameObject leftDoor = GameObject.FindGameObjectWithTag("LeftDoor");
+        Rigidbody lDoorRB = leftDoor.AddComponent<Rigidbody>();
+        BoxCollider doorCollider = leftDoor.AddComponent<BoxCollider>();
+        lDoorRB.mass = 0.01f;
+        lDoorRB.useGravity = true;
+        leftDoor.transform.parent = null;
+    }
+    void destroyHood()
+    {
+        GameObject hood = GameObject.FindGameObjectWithTag("FrontBumper");
+        Rigidbody hoodRB = hood.AddComponent<Rigidbody>();
+        hoodRB.AddForce(transform.forward * 2000);
+        BoxCollider doorCollider = hood.AddComponent<BoxCollider>();
+        hoodRB.mass = 0.01f;
+        hoodRB.useGravity = true;
+        hood.transform.parent = null;
+    }
+    void destroyBumper()
+    {
+        GameObject bumper = GameObject.FindGameObjectWithTag("RearBumper");
+        Rigidbody bumperRB = bumper.AddComponent<Rigidbody>();
+        //bumperRB.AddForce(transform.forward * 2000);
+        BoxCollider doorCollider = bumper.AddComponent<BoxCollider>();
+        bumperRB.mass = 0.01f;
+        bumperRB.useGravity = true;
+        bumper.transform.parent = null;
     }
 }
