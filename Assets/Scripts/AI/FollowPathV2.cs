@@ -6,19 +6,18 @@ public class FollowPathV2 : MonoBehaviour
     public Transform follower;
     float previousDistanceToFollower;
 
-    public float desiredDistance = 5;
-    public float responsivity = 1;
-
-    public BezierSpline startingSpline;
-    public float segmentLength = 0.003f;
-    public float speed = 2f;
-
-    float t;
+    public BezierSpline startingSpline;    
     BezierSpline currentSpline;
+    float t;
 
+    public float segmentLength = 0.003f;
+    float speed = 1f;
+
+    // for dealing with arbitrary oriented splines
+    Vector3 lastForward = Vector3.zero;
     public bool reverse = false;
 
-    Vector3 lastForward = Vector3.zero;
+    
 
     // Use this for initialization
     void Start()
@@ -30,6 +29,8 @@ public class FollowPathV2 : MonoBehaviour
         transform.rotation = currentSpline.GetOrientation(t, Vector3.Lerp(currentSpline.startNode.transform.up, currentSpline.endNode.transform.up, t));
 
         lastForward = transform.forward;
+
+        currentSpline.GetComponent<MeshCollider>().enabled = true;
 
     }
 
@@ -92,13 +93,11 @@ public class FollowPathV2 : MonoBehaviour
     void AdjustSpeed()
     {
         float distanceToFollower = Vector3.Distance(transform.position, follower.position);
-        float distanceToObjective = desiredDistance - distanceToFollower;
+        float distanceToObjective = follower.parent.GetComponent<AICarMovementV3>().distToNode - distanceToFollower;
 
         float derivate = 0;
         if (Time.deltaTime != 0)
-            derivate = (distanceToObjective - previousDistanceToFollower) / Time.deltaTime;
-
-        
+            derivate = (distanceToObjective - previousDistanceToFollower) / Time.deltaTime;        
 
         speed += derivate * Time.deltaTime;
         speed = Mathf.Clamp(speed, 0, float.MaxValue);
@@ -349,6 +348,7 @@ public class FollowPathV2 : MonoBehaviour
             }
         }
 
+        currentSpline.GetComponent<MeshCollider>().enabled = true;
         return;
     }
 }

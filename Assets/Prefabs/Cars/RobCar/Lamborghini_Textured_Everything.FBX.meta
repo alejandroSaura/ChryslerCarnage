@@ -1,0 +1,208 @@
+fileFormatVersion: 2
+guid: c7025dd1a8d1f2c4ba2e0fe2720bee47
+timeCreated: 1458401882
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: ' Lamborghini'
+    100002: Bars_Roof
+    100004: Bone_Back_Left_001
+    100006: Bone_Back_Left_002
+    100008: Bone_Back_Right_001
+    100010: Bone_Back_Right_002
+    100012: Bone_Front_Left_001
+    100014: Bone_Front_Left_002
+    100016: Bone_Front_Right_001
+    100018: Bone_Front_Right_002
+    100020: Bumper_Front
+    100022: Bumper_Rear
+    100024: Cage_Front
+    100026: Cage_Left
+    100028: Cage_Rear
+    100030: Cage_Right
+    100032: Door_Left
+    100034: Door_Right
+    100036: Engine
+    100038: Hood
+    100040: //RootNode
+    100042: Steering_Wheel
+    100044: Tyre_Back_Left
+    100046: Tyre_Back_Right
+    100048: Tyre_Front_Left
+    100050: Tyre_Front_Right
+    100052: Wheel_Back_Left
+    100054: Wheel_Back_Left_Bar
+    100056: Wheel_Back_Right
+    100058: Wheel_Back_Right_Bar
+    100060: Wheel_Front_Left
+    100062: Wheel_Front_Left_Bar
+    100064: Wheel_Front_Right
+    100066: Wheel_Front_Right_Bar
+    100068: Wheel_Pivot_Point
+    400000: ' Lamborghini'
+    400002: Bars_Roof
+    400004: Bone_Back_Left_001
+    400006: Bone_Back_Left_002
+    400008: Bone_Back_Right_001
+    400010: Bone_Back_Right_002
+    400012: Bone_Front_Left_001
+    400014: Bone_Front_Left_002
+    400016: Bone_Front_Right_001
+    400018: Bone_Front_Right_002
+    400020: Bumper_Front
+    400022: Bumper_Rear
+    400024: Cage_Front
+    400026: Cage_Left
+    400028: Cage_Rear
+    400030: Cage_Right
+    400032: Door_Left
+    400034: Door_Right
+    400036: Engine
+    400038: Hood
+    400040: //RootNode
+    400042: Steering_Wheel
+    400044: Tyre_Back_Left
+    400046: Tyre_Back_Right
+    400048: Tyre_Front_Left
+    400050: Tyre_Front_Right
+    400052: Wheel_Back_Left
+    400054: Wheel_Back_Left_Bar
+    400056: Wheel_Back_Right
+    400058: Wheel_Back_Right_Bar
+    400060: Wheel_Front_Left
+    400062: Wheel_Front_Left_Bar
+    400064: Wheel_Front_Right
+    400066: Wheel_Front_Right_Bar
+    400068: Wheel_Pivot_Point
+    2300000: ' Lamborghini'
+    2300002: Bars_Roof
+    2300004: Bumper_Front
+    2300006: Bumper_Rear
+    2300008: Cage_Front
+    2300010: Cage_Left
+    2300012: Cage_Rear
+    2300014: Cage_Right
+    2300016: Door_Left
+    2300018: Door_Right
+    2300020: Engine
+    2300022: Hood
+    2300024: Steering_Wheel
+    2300026: Wheel_Pivot_Point
+    3300000: ' Lamborghini'
+    3300002: Bars_Roof
+    3300004: Bumper_Front
+    3300006: Bumper_Rear
+    3300008: Cage_Front
+    3300010: Cage_Left
+    3300012: Cage_Rear
+    3300014: Cage_Right
+    3300016: Door_Left
+    3300018: Door_Right
+    3300020: Engine
+    3300022: Hood
+    3300024: Steering_Wheel
+    3300026: Wheel_Pivot_Point
+    4300000: ' Lamborghini'
+    4300002: Engine
+    4300004: Steering_Wheel
+    4300006: Bars_Roof
+    4300008: Door_Left
+    4300010: Hood
+    4300012: Bumper_Front
+    4300014: Bumper_Rear
+    4300016: Tyre_Back_Left
+    4300018: Tyre_Back_Right
+    4300020: Wheel_Back_Right_Bar
+    4300022: Wheel_Back_Left_Bar
+    4300024: Wheel_Front_Right_Bar
+    4300026: Wheel_Front_Right
+    4300028: Tyre_Front_Right
+    4300030: Wheel_Pivot_Point
+    4300032: Wheel_Front_Left_Bar
+    4300034: Wheel_Front_Left
+    4300036: Tyre_Front_Left
+    4300038: Door_Right
+    4300040: Cage_Rear
+    4300042: Cage_Right
+    4300044: Cage_Left
+    4300046: Cage_Front
+    4300048: Wheel_Back_Left
+    4300050: Wheel_Back_Right
+    9500000: //RootNode
+    13700000: Tyre_Back_Left
+    13700002: Tyre_Back_Right
+    13700004: Tyre_Front_Left
+    13700006: Tyre_Front_Right
+    13700008: Wheel_Back_Left
+    13700010: Wheel_Back_Left_Bar
+    13700012: Wheel_Back_Right
+    13700014: Wheel_Back_Right_Bar
+    13700016: Wheel_Front_Left
+    13700018: Wheel_Front_Left_Bar
+    13700020: Wheel_Front_Right
+    13700022: Wheel_Front_Right_Bar
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

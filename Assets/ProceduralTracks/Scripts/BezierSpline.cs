@@ -441,6 +441,7 @@ public class BezierSpline : MonoBehaviour
 
         gameObject.GetComponent<MeshFilter>().mesh = mesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+        gameObject.GetComponent<MeshCollider>().enabled = true; // enabled by default -> TO-DO: disabled on start!
     }
 
 

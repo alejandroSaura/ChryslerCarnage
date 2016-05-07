@@ -86,6 +86,7 @@
     <Compile Include="Assets\ProceduralTracks\Scripts\TrackElement.cs" />
     <Compile Include="Assets\Scripts\AI\AICarMovement.cs" />
     <Compile Include="Assets\Scripts\AI\AICarMovementV2.cs" />
+    <Compile Include="Assets\Scripts\AI\AICarMovementV3.cs" />
     <Compile Include="Assets\Scripts\AI\FollowPathV2.cs" />
     <Compile Include="Assets\Scripts\AI\carPathMover.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />

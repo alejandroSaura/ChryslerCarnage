@@ -109,8 +109,7 @@ public class PhysicsWheel : MonoBehaviour
     }
 
     void FixedUpdate ()
-    {        
-
+    {    
         Vector3 velocity = mRigidbody.velocity;
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
@@ -135,14 +134,14 @@ public class PhysicsWheel : MonoBehaviour
         tractionForce = (-tractionTorque / wheelRadius);       
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius * 2f 
-            && Vector3.Angle(transform.right, -normal)>120) // if the wheel is touching the ground //and the angle of collision is reasonable
+        if (Physics.Raycast(transform.position, -transform.right, out hit) && (hit.distance) < wheelRadius * 2f
+            && Vector3.Angle(transform.right, -normal) > 120) // if the wheel is touching the ground //and the angle of collision is reasonable
         {
             #region particularCases
 
             if (tangentialVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
-                tractionTorque = 0;                
+                tractionTorque = 0;
             }
             if (driveTorque == 0) // No driveTorque applied
             {
@@ -165,7 +164,7 @@ public class PhysicsWheel : MonoBehaviour
                     -brakeTorque / wheelRadius
                     * (1 + weightFactor) // better braking with more weight
                     * slipRatio // affected by slip factor
-                    * transform.forward) ;                 
+                    * transform.forward);
 
                 Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward, Color.red);
             }
@@ -175,14 +174,16 @@ public class PhysicsWheel : MonoBehaviour
 
             #region reverse gear
 
-            if (tangentialVelocity < 1f && brakeTorque > 0)
-            {                
+            if (tangentialVelocity < 1f && Mathf.Abs(tangentialVelocity) < 30 && brakeTorque > 0)
+            {
 
                 mRigidbody.AddForce(
                     brakeTorque / wheelRadius
                     * 1
-                    * (1 + weightFactor)                    
-                    * -transform.forward);
+                    * (1 + weightFactor)
+                    * -transform.forward
+                    * 0.7f
+                );
                 mRigidbody.drag = 0;
 
                 //Debug.DrawLine(transform.position, transform.position + -brakeTorque / wheelRadius * (1 + weightFactor) * transform.forward, Color.red);
@@ -193,7 +194,7 @@ public class PhysicsWheel : MonoBehaviour
 
             #region forwardForce
 
-            if(Vector3.Dot(mRigidbody.velocity, transform.forward) < 0)
+            if (Vector3.Dot(mRigidbody.velocity, transform.forward) < 0)
             {
                 tractionTorque *= 5;
             }
@@ -216,7 +217,7 @@ public class PhysicsWheel : MonoBehaviour
             //Vector3 direction = transform.up;
 
             sideSlipAngle = Vector3.Angle(transform.forward, velocity);
-            //if (sideSlipAngle > 180) sideSlipAngle = 360 - sideSlipAngle;
+            if (sideSlipAngle > 90) sideSlipAngle = 180 - sideSlipAngle;
             sideSlipAngleRatio = 1 - sideSlipAngle / 180;
             //Debug.Log(sideSlipAngle);
 
@@ -234,9 +235,9 @@ public class PhysicsWheel : MonoBehaviour
                     (
                     (Mathf.Abs(latVelocity) * Mathf.Sign(latVelocity))
                     //* (supportedWeight)*2
-                    * mRigidbody.mass*9.8f
+                    * mRigidbody.mass * 9.8f
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
-                    * latForce_slipFactor 
+                    * latForce_slipFactor
                     * sideSlipAngleRatio
                     * latForce_velocityFactor
                     * driftWeight
@@ -252,8 +253,8 @@ public class PhysicsWheel : MonoBehaviour
                     (Mathf.Abs(latVelocity) * 1.5f * Mathf.Sign(latVelocity))
                     //* (supportedWeight)*2
                     * Mathf.Clamp(tangentialVelocity / 8, 1, float.MaxValue)
-                    * mRigidbody.mass*9.8f
-                    * 2                    
+                    * mRigidbody.mass * 9.8f
+                    * 2
                     ) * direction;
 
                 //mRigidbody.drag = 5;
@@ -267,17 +268,17 @@ public class PhysicsWheel : MonoBehaviour
 
             // Apply force
             if ((tangentialVelocity) > 0f) // going forward
-            {                
+            {
                 mRigidbody.AddForceAtPosition(-lateralForce, transform.position);
                 Debug.DrawLine(transform.position, transform.position + -lateralForce);
             }
-            else if((tangentialVelocity) < 0f) // backwards
-            {                
+            else if ((tangentialVelocity) < 0f) // backwards
+            {
                 mRigidbody.AddForceAtPosition(-lateralForce, transform.position);
                 Debug.DrawLine(transform.position, transform.position + -lateralForce);
             }
-           
-            if(driveTorque > 0 && !goingBackwards) mRigidbody.drag = 0;
+
+            if (driveTorque > 0 && !goingBackwards) mRigidbody.drag = 0;
             #endregion
 
             #region rotateGeometry
@@ -288,7 +289,7 @@ public class PhysicsWheel : MonoBehaviour
             if (wheelGeometry != null)
                 wheelGeometry.Rotate(angularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime, 0.0f, 0.0f);
 
-            
+
 
             #endregion
 
@@ -299,7 +300,7 @@ public class PhysicsWheel : MonoBehaviour
             // set joint to support soft hits
             {
                 SoftJointLimitSpring spring = axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring;
-                spring.spring = Mathf.Lerp(spring.spring, 450, Time.deltaTime*5);
+                spring.spring = Mathf.Lerp(spring.spring, 450, Time.deltaTime * 5);
                 axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring = spring;
             }
         }
@@ -327,8 +328,14 @@ public class PhysicsWheel : MonoBehaviour
             // set joint to support hard hits
             {
                 SoftJointLimitSpring spring = axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring;
-                spring.spring = Mathf.Lerp(spring.spring, 9999, Time.deltaTime*5);
+                spring.spring = Mathf.Lerp(spring.spring, 9999, Time.deltaTime * 5);
                 axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring = spring;
+            }
+
+
+            if (Vector3.Dot(transform.up, Vector3.up) > -0.2f)
+            {// flipped car. Rotate around Z axis
+                //input.userLeftStickHorizontal
             }
 
             #endregion
