@@ -102,6 +102,8 @@ public class POI : MonoBehaviour
             connection = "east_west";
         }
 
+        if (visited == false) connection = ""; 
+
 
         Track[] tracks = GetComponentsInChildren<Track>();
 

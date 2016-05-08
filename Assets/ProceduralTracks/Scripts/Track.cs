@@ -130,7 +130,14 @@ public class Track : MonoBehaviour
     {
         BezierSpline[] splines = gameObject.GetComponentsInChildren<BezierSpline>();
 
-        if (splines.Length == 0 || path == "" || path == null) return;
+        if (splines.Length == 0 || path == "" || path == null)
+        {
+            foreach (BezierSpline s in splines)
+            {
+                s.isPath = false;
+            }
+            return;
+        }
         
         foreach (BezierSpline s in splines)
         {
