@@ -113,7 +113,7 @@ public class Track : MonoBehaviour
 
     void Start()
     {
-        //SetPath("north_west");
+        //SetPath("east_west");
     }
 
     public void RemovePath()
@@ -129,6 +129,8 @@ public class Track : MonoBehaviour
     public void SetPath(string path)
     {
         BezierSpline[] splines = gameObject.GetComponentsInChildren<BezierSpline>();
+
+        if (splines.Length == 0 || path == "" || path == null) return;
         
         foreach (BezierSpline s in splines)
         {

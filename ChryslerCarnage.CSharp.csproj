@@ -88,10 +88,12 @@
     <Compile Include="Assets\Scripts\AI\AICarMovementV2.cs" />
     <Compile Include="Assets\Scripts\AI\AICarMovementV3.cs" />
     <Compile Include="Assets\Scripts\AI\FollowPathV2.cs" />
+    <Compile Include="Assets\Scripts\AI\PathDecisor.cs" />
     <Compile Include="Assets\Scripts\AI\carPathMover.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\CameraPivotController.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
+    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />
     <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
