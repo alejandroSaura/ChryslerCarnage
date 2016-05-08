@@ -56,13 +56,15 @@ public class DamageScript : MonoBehaviour {
                             //transform.DetachChildren();
                             Instantiate(collisionParticle, pos, rot);
                         }
-                        if (transform.gameObject.name == "RobCar")
-                        {
-                        Debug.Log("Rob's car");
-                            if (carHP < 75)
-                            {
-                                damagedParticle.SetActive(true);
-                                if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1])
+                        
+                        
+                          if (carHP < 75)
+                          {
+                            //if (gameObject.name == "RobCar")
+                            //{
+                            Debug.Log("Rob's car");
+                            damagedParticle.SetActive(true);
+                                if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1] || contact.thisCollider == colliderArray[2])
                                 {
                                     Debug.Log("Collided at the front");
                                     destroyHood();
@@ -83,37 +85,38 @@ public class DamageScript : MonoBehaviour {
                                     destroyRightDoor();
                                 }
 
-                            }
+                         //   }
                         }
-                    else if (transform.gameObject.name == "MikkoCar Player")
-                    {
-                        Debug.Log("Mikko's car");
-                        if (carHP < 75)
-                        {
-                            damagedParticle.SetActive(true);
-                            if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1] || contact.thisCollider == colliderArray[2])
-                            {
-                                Debug.Log("Collided at the front");
-                                destroyHood();
-                            }
-                            if (contact.thisCollider == colliderArray[7] || contact.thisCollider == colliderArray[8])
-                            {
-                                Debug.Log("Back collision");
-                                destroyBumper();
-                            }
-                            if (contact.thisCollider == colliderArray[5]|| contact.thisCollider == colliderArray[6])
-                            {
-                                Debug.Log("Left Door Broken");
-                                destroyRightDoor();
-                            }
-                            if (contact.thisCollider == colliderArray[3]|| contact.thisCollider == colliderArray[4])
-                            {
-                                Debug.Log("Right Door Broken");
-                                destroyLeftDoor();
-                            }
+                     
+                        //if (carHP < 75)
+                        //{
+                        // else if (gameObject.name == "MikkoCar Player")
+                        //    {
+                        //    Debug.Log("Mikko's car");
+                        //    damagedParticle.SetActive(true);
+                        //    if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1])
+                        //    {
+                        //        Debug.Log("Collided at the front");
+                        //        destroyHood();
+                        //    }
+                        //    if (contact.thisCollider == colliderArray[7] || contact.thisCollider == colliderArray[8])
+                        //    {
+                        //        Debug.Log("Back collision");
+                        //        destroyBumper();
+                        //    }
+                        //    if (contact.thisCollider == colliderArray[5]|| contact.thisCollider == colliderArray[6])
+                        //    {
+                        //        Debug.Log("Right Door Broken");
+                        //        destroyRightDoor();
+                        //    }
+                        //    if (contact.thisCollider == colliderArray[3]|| contact.thisCollider == colliderArray[4])
+                        //    {
+                        //        Debug.Log("Left Door Broken");
+                        //        destroyLeftDoor();
+                        //    }
 
-                        }
-                    }
+                        //}
+                  
                         if (carHP < 0)
                     {
                         //transform.DetachChildren();
