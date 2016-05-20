@@ -6,7 +6,7 @@ public class DamageParticle : MonoBehaviour {
     public DamageScript hpRef;
 	// Use this for initialization
 	void Start () {
-        smokeParticle = GetComponent<ParticleSystem>();
+        smokeParticle = transform.GetComponent<ParticleSystem>();
         hpRef = transform.parent.GetComponentInChildren<DamageScript>();
 	}
 	
@@ -14,7 +14,7 @@ public class DamageParticle : MonoBehaviour {
 	void Update () {
         //if (hpRef.carHP < 75)
         //{
-            smokeParticle.maxParticles = Mathf.RoundToInt(100 - hpRef.carHP)*2;//Mathf.RoundToInt(hpRef.carHP)
+            smokeParticle.maxParticles = Mathf.RoundToInt(100 - hpRef.carHP)*2;
       //  }
         //smokeParticle.maxParticles = 10;
 	}

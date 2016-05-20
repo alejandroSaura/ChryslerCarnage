@@ -23,12 +23,11 @@ public class DamageScript : MonoBehaviour {
     //Sphere collider numbers:
     //1 - front left
     //2 - front right
-    //3 - front middle (left door for Mikko's car)
-    //4 - right door (left door for Mikko's car)
-    //5 - left door (right door for Mikko's car)
-    //6 - back left (right door for Mikko's car)
+    //3 - front middle 
+    //4 - right door 
+    //5 - left door 
+    //6 - back left 
     //7 - back right
-    //8 - (back left Mikko car)
     /// </summary>
 
     // Use this for initialization
@@ -38,7 +37,6 @@ public class DamageScript : MonoBehaviour {
 
     void OnCollisionEnter(Collision col)
     {
-        
             foreach (ContactPoint contact in col.contacts)
             {
                 if (col.gameObject.tag == "Track" || col.gameObject.tag == "Car")
@@ -56,85 +54,43 @@ public class DamageScript : MonoBehaviour {
                             //transform.DetachChildren();
                             Instantiate(collisionParticle, pos, rot);
                         }
-                        
-                        
-                          if (carHP < 75)
-                          {
-                            //if (gameObject.name == "RobCar")
-                            //{
-                            Debug.Log("Rob's car");
+
+
+                        if (carHP < 75)
+                        {
                             damagedParticle.SetActive(true);
-                                if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1] || contact.thisCollider == colliderArray[2])
-                                {
-                                    Debug.Log("Collided at the front");
-                                    destroyHood();
-                                }
-                                if (contact.thisCollider == colliderArray[6] || contact.thisCollider == colliderArray[7])
-                                {
-                                    Debug.Log("Back collision");
-                                    destroyBumper();
-                                }
-                                if (contact.thisCollider == colliderArray[5])
-                                {
-                                    Debug.Log("Left Door Broken");
-                                    destroyLeftDoor();
-                                }
-                                if (contact.thisCollider == colliderArray[4])
-                                {
-                                    Debug.Log("Right Door Broken");
-                                    destroyRightDoor();
-                                }
+                            if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1] || contact.thisCollider == colliderArray[2])
+                            {
+                                Debug.Log("Collided at the front");
+                                destroyHood();
+                            }
+                            if (contact.thisCollider == colliderArray[6] || contact.thisCollider == colliderArray[7])
+                            {
+                                Debug.Log("Back collision");
+                                destroyBumper();
+                            }
+                            if (contact.thisCollider == colliderArray[5])
+                            {
+                                Debug.Log("Left Door Broken");
+                                destroyLeftDoor();
+                            }
+                            if (contact.thisCollider == colliderArray[4])
+                            {
+                                Debug.Log("Right Door Broken");
+                                destroyRightDoor();
+                            }
 
-                         //   }
                         }
-                     
-                        //if (carHP < 75)
-                        //{
-                        // else if (gameObject.name == "MikkoCar Player")
-                        //    {
-                        //    Debug.Log("Mikko's car");
-                        //    damagedParticle.SetActive(true);
-                        //    if (contact.thisCollider == colliderArray[0] || contact.thisCollider == colliderArray[1])
-                        //    {
-                        //        Debug.Log("Collided at the front");
-                        //        destroyHood();
-                        //    }
-                        //    if (contact.thisCollider == colliderArray[7] || contact.thisCollider == colliderArray[8])
-                        //    {
-                        //        Debug.Log("Back collision");
-                        //        destroyBumper();
-                        //    }
-                        //    if (contact.thisCollider == colliderArray[5]|| contact.thisCollider == colliderArray[6])
-                        //    {
-                        //        Debug.Log("Right Door Broken");
-                        //        destroyRightDoor();
-                        //    }
-                        //    if (contact.thisCollider == colliderArray[3]|| contact.thisCollider == colliderArray[4])
-                        //    {
-                        //        Debug.Log("Left Door Broken");
-                        //        destroyLeftDoor();
-                        //    }
-
-                        //}
-                  
-                        if (carHP < 0)
-                    {
-                        //transform.DetachChildren();
-                        carObject.SetActive(false);
-                        Instantiate(DeathParticle, transform.position, transform.rotation);
-                        Instantiate(mainCamera, transform.position, transform.rotation);
-                        // Debug.Log("Destroyed!");
                     }
+
+
                 }
             }
-        }
         
-        {
-
-        }
-       // Debug.Log(col.relativeVelocity.magnitude);
-        //Debug.Log("Collided");
     }
+        
+
+
 	
 	// Update is called once per frame
 	void Update () {
