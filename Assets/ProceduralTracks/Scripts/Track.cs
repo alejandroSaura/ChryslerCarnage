@@ -34,7 +34,9 @@ public class Track : MonoBehaviour
     public int curveIdGenerator = 0;
     public int bifIdGenerator = 0;
 
-    public Mesh mesh;    
+    public Mesh mesh;
+
+    public bool hideMeshes = false;
 
     string lastState = "";
     void Update()
@@ -50,12 +52,20 @@ public class Track : MonoBehaviour
         if (state != lastState)
         {
             Load();
-            if (state == "PlayMode") //StartCoroutine(CombineMeshes()); 
-                gameObject.GetComponent<MeshCollider>().enabled = false;
+            if (state == "PlayMode") //StartCoroutine(CombineMeshes());
+            {
+                gameObject.GetComponent<MeshCollider>().enabled = false;                
+            }
+
             if (state == "EditorMode")
             {
                 ReactivateMeshes();
                 RemovePath();
+            }
+
+            if (hideMeshes && EditorApplication.isPlaying)
+            {
+                DeactivateMeshes();
             }
         }
         lastState = state;
@@ -150,6 +160,24 @@ public class Track : MonoBehaviour
         }
     }
 
+    public void DeactivateMeshes()
+    {
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        int i = 0;
+        while (i < meshFilters.Length)
+        {
+            if (meshFilters[i].gameObject != gameObject)
+            {
+                //meshFilters[i].gameObject.SetActive(true);
+                meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                
+                //meshFilters[i].gameObject.GetComponent<MeshCollider>().enabled = false;
+                Destroy(meshFilters[i].gameObject.GetComponent<MeshCollider>());
+            }
+            i++;
+        }
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
+    }
 
     public void ReactivateMeshes()
     {

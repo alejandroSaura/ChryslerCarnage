@@ -52,7 +52,7 @@ public class Bifurcation : TrackElement
         {            
             //Load();
             Connect();
-            if (splines != null) Extrude();
+            //if (splines != null) Extrude();
         }
         lastState = state;
 
