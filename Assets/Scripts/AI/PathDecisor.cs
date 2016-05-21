@@ -7,6 +7,8 @@ public class PathDecisor : MonoBehaviour
     public POI startPOI = null;
     public string startingIncomingWay = "South";
 
+    string nextIncomingWay = "";
+
     Dictionary<string, POI> PointsOfInterest;
 
 	void Start ()
@@ -25,8 +27,10 @@ public class PathDecisor : MonoBehaviour
 
     public bool CalculateLapPath()
     {
+        if (nextIncomingWay != "") startPOI.IncomingWay = nextIncomingWay;
+
         // debug string
-        string lap = "Lap : ";
+            string lap = "Lap : ";
 
         Random.seed = (int)System.DateTime.Now.Ticks;
 
@@ -67,7 +71,10 @@ public class PathDecisor : MonoBehaviour
             }
 
             currentPOI.OutgoingWay = currentPOI.neighbours.FirstOrDefault(n => n.Value == nextPOI).Key;
-            nextPOI.IncomingWay = nextPOI.neighbours.FirstOrDefault(n => n.Value == currentPOI).Key;
+            if (nextPOI != startPOI)
+                nextPOI.IncomingWay = nextPOI.neighbours.FirstOrDefault(n => n.Value == currentPOI).Key;
+            else
+                nextIncomingWay = nextPOI.neighbours.FirstOrDefault(n => n.Value == currentPOI).Key;
 
             currentPOI.Visited = true;
 
@@ -77,7 +84,7 @@ public class PathDecisor : MonoBehaviour
 
         } while (currentPOI != startPOI);
 
-        Debug.Log(lap);
+        //Debug.Log(lap);
 
         //Propagate selected ways to all POIs
         foreach (KeyValuePair<string, POI> p in PointsOfInterest)

@@ -126,6 +126,7 @@ public class ObjExporterScript
         }
         for (int material = 0; material < m.subMeshCount; material++)
         {
+
             sb.Append("\n");
             sb.Append("usemtl ").Append(mats[material].name).Append("\n");
             sb.Append("usemap ").Append(mats[material].name).Append("\n");
