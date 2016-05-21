@@ -18,8 +18,8 @@ public class PathDecisor : MonoBehaviour
         PointsOfInterest.Add("West", GameObject.Find("WEST").GetComponent<POI>());
         PointsOfInterest.Add("Center", GameObject.Find("CENTER").GetComponent<POI>());
 
-        startPOI = PointsOfInterest["West"];
-        startPOI.IncomingWay = "South";
+        //startPOI = PointsOfInterest["West"];
+        startPOI.IncomingWay = startingIncomingWay;
         
     }    
 
