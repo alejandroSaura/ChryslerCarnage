@@ -30,7 +30,7 @@ public class FollowPathV2 : MonoBehaviour
 
         lastForward = transform.forward;
 
-        currentSpline.GetComponent<MeshCollider>().enabled = true;
+        //currentSpline.GetComponent<MeshCollider>().enabled = true;
 
     }
 
@@ -348,7 +348,7 @@ public class FollowPathV2 : MonoBehaviour
             }
         }
 
-        currentSpline.GetComponent<MeshCollider>().enabled = true;
+        //currentSpline.GetComponent<MeshCollider>().enabled = true;
         return;
     }
 }
