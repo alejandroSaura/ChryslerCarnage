@@ -48,6 +48,7 @@ public class MenuExtension : MonoBehaviour
     [MenuItem("Track/AddTrack")]
     static void AddTrack()
     {
+
         int newId = Track.trackIdGenerator++;
         GameObject track = new GameObject("ProceduralTrack" + newId);
         Selection.activeObject = track;

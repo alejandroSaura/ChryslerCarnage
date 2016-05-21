@@ -217,7 +217,7 @@ public class PhysicsWheel : MonoBehaviour
             //Vector3 direction = transform.up;
 
             sideSlipAngle = Vector3.Angle(transform.forward, velocity);
-            if (sideSlipAngle > 90) sideSlipAngle = 180 - sideSlipAngle;
+            //if (sideSlipAngle > 180) sideSlipAngle = 360 - sideSlipAngle;
             sideSlipAngleRatio = 1 - sideSlipAngle / 180;
             //Debug.Log(sideSlipAngle);
 
