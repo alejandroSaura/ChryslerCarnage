@@ -122,7 +122,7 @@ public class AICarMovementV3 : InputInterface
         Vector3 steerVector = transform.InverseTransformPoint(new Vector3(nodeToFollow.position.x, transform.position.y, nodeToFollow.position.z));
         float newSteer = (steerVector.x) * maxSteer;
 
-
+        Debug.Log("steer vector.x = " + steerVector.x);
         Debug.Log("final steer = " + newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)));
 
 

@@ -8,14 +8,20 @@ public class GameManager : MonoBehaviour {
 	void Start ()
     {
         pathDecisor = gameObject.GetComponent<PathDecisor>();
-    }
-	
-	void Update ()
-    {
+
         bool lapCalculated = false;
         while (!lapCalculated)
         {
             lapCalculated = pathDecisor.CalculateLapPath();
         }
-	}
+    }
+	
+	void Update ()
+    {
+        //bool lapCalculated = false;
+        //while (!lapCalculated)
+        //{
+        //    lapCalculated = pathDecisor.CalculateLapPath();
+        //}
+    }
 }
