@@ -101,7 +101,7 @@ public class DamageScript : MonoBehaviour {
         //    destroyRightDoor();
         //    destroyBumper();
         //}
-        Debug.Log(carHP);
+        //Debug.Log(carHP);
 
     }
     void destroyRightDoor()
