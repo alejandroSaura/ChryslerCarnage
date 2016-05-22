@@ -19,8 +19,8 @@ public class TrackEditor : Editor
         }
         if (GUILayout.Button("Export"))
         {
-            // Export .obj mesh
-            myTrack.InstantCombineMeshes();           
+            // Export.obj mesh
+            myTrack.InstantCombineMeshes();
 
             //if (EditorApplication.isPlaying)
             myTrack.GetComponent<MeshExporter>().Export();
