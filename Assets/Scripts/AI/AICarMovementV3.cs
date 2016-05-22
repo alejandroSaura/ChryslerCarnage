@@ -14,6 +14,9 @@ public class AICarMovementV3 : InputInterface
     float statesCoolDownTimer = 0;
     // ----------------------------------
 
+    public float damperConstant = 5;
+    float lastSteer = 0;
+
     public CarRaceController otherCar = null;
 
     public Transform nodeToFollow;
@@ -170,8 +173,12 @@ public class AICarMovementV3 : InputInterface
         //Debug.Log("steer vector.x = " + steerVector.x);
         //Debug.Log("final steer = " + newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)));
 
+        float derivate = (newSteer - lastSteer) / Time.deltaTime;
 
-                
+        float damperForce = damperConstant * derivate;
+        newSteer += damperForce;
+
+
         userLeftStickHorizontal = Mathf.Clamp(newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)), -1, 1);
         if (currentState == STATES.REVERSE) userLeftStickHorizontal *= -1;
 
@@ -189,6 +196,9 @@ public class AICarMovementV3 : InputInterface
         //Debug.Log(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature());
         if (nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature() > 2) //throttleModifier = 1;
             throttleModifier += Mathf.Clamp(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature(), 0, 0.6f);
+
+
+        lastSteer = newSteer;
     }
 
 }
