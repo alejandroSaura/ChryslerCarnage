@@ -99,6 +99,10 @@
     <Compile Include="Assets\Scripts\CameraPivotController.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
     <Compile Include="Assets\Scripts\CarRaceController.cs" />
+    <Compile Include="Assets\Scripts\Destruction\DamageParticle.cs" />
+    <Compile Include="Assets\Scripts\Destruction\DamageScript.cs" />
+    <Compile Include="Assets\Scripts\Destruction\DamageScriptMikko.cs" />
+    <Compile Include="Assets\Scripts\Destruction\ParticleAutoDestroy.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />
