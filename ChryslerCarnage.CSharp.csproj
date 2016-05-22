@@ -106,6 +106,7 @@
     <Compile Include="Assets\Scripts\Destruction\ParticleAutoDestroy.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
+    <Compile Include="Assets\Scripts\LapTrigger.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />
     <Compile Include="Assets\Scripts\PhysicsWheel.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />

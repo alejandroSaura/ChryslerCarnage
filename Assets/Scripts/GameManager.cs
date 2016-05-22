@@ -66,8 +66,11 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Car is Respawning");
         carToRespawn.gameObject.transform.position = carRespawner.transform.position + carRespawner.transform.up * 2;
         carToRespawn.gameObject.transform.rotation = carRespawner.transform.rotation;
-
         carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().currentSpline = carRespawner.currentSpline;
 
+    }
+    public void LapCounter()
+    {
+        Debug.Log("Thats A Lap");
     }
 }
