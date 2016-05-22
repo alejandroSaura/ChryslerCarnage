@@ -17,7 +17,7 @@ public class FollowPathV2 : MonoBehaviour
     Vector3 lastForward = Vector3.zero;
     public bool reverse = false;
 
-    
+    public float distanceSinceLapStart = 0;
 
     // Use this for initialization
     void Start()
@@ -41,7 +41,7 @@ public class FollowPathV2 : MonoBehaviour
 
     // This behaviour assumes that the paths has been selected -> All splines has been already marked as path.
     void Update()
-    {
+    {        
         AdjustSpeed();
 
         float currentDistance = 0;
@@ -82,6 +82,9 @@ public class FollowPathV2 : MonoBehaviour
 
             currentDistance += Vector3.Distance(lastPoint, newPoint);
             lastPoint = newPoint;
+
+
+            distanceSinceLapStart += segmentLength;
 
         }
 
@@ -351,4 +354,5 @@ public class FollowPathV2 : MonoBehaviour
         //currentSpline.GetComponent<MeshCollider>().enabled = true;
         return;
     }
+    
 }

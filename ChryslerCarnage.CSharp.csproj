@@ -89,10 +89,16 @@
     <Compile Include="Assets\Scripts\AI\AICarMovementV3.cs" />
     <Compile Include="Assets\Scripts\AI\FollowPathV2.cs" />
     <Compile Include="Assets\Scripts\AI\PathDecisor.cs" />
+    <Compile Include="Assets\Scripts\AI\Statemachine\FinishState.cs" />
+    <Compile Include="Assets\Scripts\AI\Statemachine\ILapState.cs" />
+    <Compile Include="Assets\Scripts\AI\Statemachine\InLapState.cs" />
+    <Compile Include="Assets\Scripts\AI\Statemachine\StartState.cs" />
+    <Compile Include="Assets\Scripts\AI\Statemachine\StatePatternLap.cs" />
     <Compile Include="Assets\Scripts\AI\carPathMover.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\CameraPivotController.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
+    <Compile Include="Assets\Scripts\CarRaceController.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />
