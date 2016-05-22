@@ -61,4 +61,13 @@ public class GameManager : MonoBehaviour {
         deathWallFollower.follower = cars[0].transform;
         carRespawner.follower = cars[0].transform;
     }
+
+    public void RespawnCar(CarRaceController carToRespawn) {
+        Debug.Log("Car is Respawning");
+        carToRespawn.gameObject.transform.position = carRespawner.transform.position + carRespawner.transform.up * 2;
+        carToRespawn.gameObject.transform.rotation = carRespawner.transform.rotation;
+
+        carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().currentSpline = carRespawner.currentSpline;
+
+    }
 }

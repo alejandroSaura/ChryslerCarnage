@@ -9,7 +9,7 @@ public class FollowPathV2 : MonoBehaviour
     float previousDistanceToFollower;
 
     public BezierSpline startingSpline;    
-    BezierSpline currentSpline;
+    public BezierSpline currentSpline;
     float t;
 
     public float segmentLength = 0.003f;
