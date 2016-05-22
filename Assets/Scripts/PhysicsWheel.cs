@@ -18,8 +18,8 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve slipToSideSlip;
     public AnimationCurve maxSteerAngleCurve;
     public float maxTorqueflip=200.0f;
-
-
+    public float dustValue;
+    public float dustValueAcc;
     // animation adjustment params
     public float upAmplitude = 0.5f;
     public float downAmplitude = 0.5f;
@@ -133,8 +133,9 @@ public class PhysicsWheel : MonoBehaviour
         weightFactor = (supportedWeight-0.4f)/0.2f;
         Mathf.Clamp01(weightFactor);        
 
-        // slip ratio. Will be modified below due to other effects 
-        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1 - weightFactor);         
+        // slip ratio. Will be modified below due to other effects  //acceleration
+        slipRatio = 1 + slipCurve.Evaluate(angularVelocity) * userThrottleWeight.Evaluate(input.userThrottle) * (1 - weightFactor);
+        dustValueAcc = slipRatio;
 
         tractionTorque = weightFactor * driveTorque;
         tractionForce = (-tractionTorque / wheelRadius);       
@@ -148,10 +149,12 @@ public class PhysicsWheel : MonoBehaviour
             if (tangentialVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
                 tractionTorque = 0;
+                
             }
             if (driveTorque == 0) // No driveTorque applied
             {
                 //slipRatio = 1;
+                dustValue = 0; //value needed to reset the dust particles
                 angularVelocity = tangentialVelocity / wheelRadius;
             }
 
@@ -163,6 +166,7 @@ public class PhysicsWheel : MonoBehaviour
             if (tangentialVelocity > 1f && brakeTorque > 0)
             {
                 slipRatio = 1 + slipBrakeCurve.Evaluate(angularVelocity) * userBrakeWeight.Evaluate(input.userBrake) * (weightFactor - 1);
+                dustValue = slipRatio;
                 if (slipRatio > 1) slipRatio = 1; // we dont want the wheel to be spinning faster than the velocity of the ground when braking 
                 if (slipRatio < 0) slipRatio = 0; // block wheels when you brake too hard
 

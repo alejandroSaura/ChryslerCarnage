@@ -176,10 +176,10 @@ public class AICarMovementV3 : InputInterface
         float derivate = (newSteer - lastSteer) / Time.deltaTime;
 
         float damperForce = damperConstant * derivate;
-        newSteer += damperForce;
+        newSteer += Mathf.Clamp(damperForce, -20, 20);
 
 
-        userLeftStickHorizontal = Mathf.Clamp(newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)), -1, 1);
+        userLeftStickHorizontal =  Mathf.Clamp(newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)), -1, 1);
         if (currentState == STATES.REVERSE) userLeftStickHorizontal *= -1;
 
         // Debug.Log(newSteer);
