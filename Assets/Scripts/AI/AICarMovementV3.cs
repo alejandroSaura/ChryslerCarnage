@@ -14,6 +14,10 @@ public class AICarMovementV3 : InputInterface
     float statesCoolDownTimer = 0;
     // ----------------------------------
 
+    public float damperConstant = 5;
+    float lastSteer = 0;
+
+    public CarRaceController otherCar = null;
 
     public Transform nodeToFollow;
     Vector3 lastPos;
@@ -23,6 +27,9 @@ public class AICarMovementV3 : InputInterface
     public float maxSteer = 3.0f;
 
     public AnimationCurve steeringDamper;
+
+    public AnimationCurve moneouverSmooth;
+    public float maneouverOffset = 0;
 
     float currentSpeed;
     public float topSpeed = 5000.0f;
@@ -46,14 +53,32 @@ public class AICarMovementV3 : InputInterface
         Steer();
     }
 
+    void OnTriggerEnter (Collider other)
+    {
+        
+        if (otherCar == null)
+        {
+            otherCar = other.transform.GetComponent<CarRaceController>();
+            
+
+        }
+    }
+    void OnTriggerExit (Collider other)
+    {
+        if (otherCar != null)
+        {
+           if (otherCar == other.transform.GetComponent<CarRaceController>()) otherCar = null;
+        }
+    }
+
     IEnumerator AIUpdate()
     {
         while (true)
         {
             // Something ahead?
             RaycastHit hit;
-            Physics.Raycast(transform.position, transform.forward, out hit);
-            //Debug.DrawLine(transform.position, transform.position + transform.forward * 5);
+            Physics.Raycast(transform.position, transform.forward + transform.up * 0.3f, out hit);
+            Debug.DrawLine(transform.position, transform.position + transform.forward * 5, Color.magenta);
 
             // Something behind?
             RaycastHit hitBehind;
@@ -88,7 +113,30 @@ public class AICarMovementV3 : InputInterface
                 currentState = STATES.FREEDRIVE;
             }
 
-            yield return new WaitForSeconds(1);
+            maneouverOffset = 0;
+
+            if (otherCar != null)
+            {
+                Vector3 relativePosition = transform.InverseTransformPoint(otherCar.transform.position);
+
+                maneouverOffset = moneouverSmooth.Evaluate(Mathf.Abs(relativePosition.x)) * Mathf.Sign(relativePosition.x);
+            }
+
+            //if (hit.transform != null)
+            //{
+            //    CarRaceController otherCar = hit.transform.GetComponent<CarRaceController>();
+            //    if (otherCar != null)
+            //    {
+            //        Vector3 relativePosition = transform.InverseTransformPoint(otherCar.transform.position);
+
+            //        maneouverOffset = moneouverSmooth.Evaluate(relativePosition.x);
+
+            //    }                
+            //}
+
+
+
+            yield return new WaitForSeconds(0.2f);
         }
     }
 
@@ -119,14 +167,18 @@ public class AICarMovementV3 : InputInterface
 
     void Steer()
     {
-        Vector3 steerVector = transform.InverseTransformPoint(new Vector3(nodeToFollow.position.x, transform.position.y, nodeToFollow.position.z));
+        Vector3 steerVector = transform.InverseTransformPoint(new Vector3(nodeToFollow.position.x, transform.position.y, nodeToFollow.position.z)) - new Vector3(maneouverOffset, 0, 0);
         float newSteer = (steerVector.x) * maxSteer;
 
+        //Debug.Log("steer vector.x = " + steerVector.x);
+        //Debug.Log("final steer = " + newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)));
 
-        Debug.Log("final steer = " + newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)));
+        float derivate = (newSteer - lastSteer) / Time.deltaTime;
+
+        float damperForce = damperConstant * derivate;
+        newSteer += damperForce;
 
 
-                
         userLeftStickHorizontal = Mathf.Clamp(newSteer * steeringDamper.Evaluate(Mathf.Abs(steerVector.x)), -1, 1);
         if (currentState == STATES.REVERSE) userLeftStickHorizontal *= -1;
 
@@ -144,6 +196,9 @@ public class AICarMovementV3 : InputInterface
         //Debug.Log(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature());
         if (nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature() > 2) //throttleModifier = 1;
             throttleModifier += Mathf.Clamp(nodeToFollow.GetComponent<FollowPathV2>().GetCurrentCurvature(), 0, 0.6f);
+
+
+        lastSteer = newSteer;
     }
 
 }

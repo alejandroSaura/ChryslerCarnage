@@ -3,21 +3,25 @@ using System.Collections;
 
 public class FollowPathV2 : MonoBehaviour
 {
+    public bool followFromBehind = false;
+
     public Transform follower;
     float previousDistanceToFollower;
 
     public BezierSpline startingSpline;    
-    BezierSpline currentSpline;
+    public BezierSpline currentSpline;
     float t;
 
     public float segmentLength = 0.003f;
-    float speed = 1f;
+    public float speed = 1f;
 
     // for dealing with arbitrary oriented splines
     Vector3 lastForward = Vector3.zero;
     public bool reverse = false;
 
-    
+    public float distanceSinceLapStart = 0;
+
+    public float desiredDistToFollower = 50;
 
     // Use this for initialization
     void Start()
@@ -30,7 +34,7 @@ public class FollowPathV2 : MonoBehaviour
 
         lastForward = transform.forward;
 
-        currentSpline.GetComponent<MeshCollider>().enabled = true;
+        //currentSpline.GetComponent<MeshCollider>().enabled = true;
 
     }
 
@@ -41,7 +45,7 @@ public class FollowPathV2 : MonoBehaviour
 
     // This behaviour assumes that the paths has been selected -> All splines has been already marked as path.
     void Update()
-    {
+    {        
         AdjustSpeed();
 
         float currentDistance = 0;
@@ -83,6 +87,9 @@ public class FollowPathV2 : MonoBehaviour
             currentDistance += Vector3.Distance(lastPoint, newPoint);
             lastPoint = newPoint;
 
+
+            distanceSinceLapStart += segmentLength;
+
         }
 
         transform.position = newPoint;
@@ -92,19 +99,55 @@ public class FollowPathV2 : MonoBehaviour
 
     void AdjustSpeed()
     {
-        float distanceToFollower = Vector3.Distance(transform.position, follower.position);
-        float distanceToObjective = follower.parent.GetComponent<AICarMovementV3>().distToNode - distanceToFollower;
+        if (follower != null)
+        {
+            float distanceToFollower = 0;
+            float distanceToObjective = 0;
 
-        float derivate = 0;
-        if (Time.deltaTime != 0)
-            derivate = (distanceToObjective - previousDistanceToFollower) / Time.deltaTime;        
+            if (followFromBehind)
+            {
+                //speed = follower.transform.GetComponentInChildren<FollowPathV2>().speed;
 
-        speed += derivate * Time.deltaTime;
-        speed = Mathf.Clamp(speed, 0, float.MaxValue);
+                distanceToFollower = follower.transform.GetComponentInChildren<FollowPathV2>().distanceSinceLapStart - distanceSinceLapStart;
+                distanceToObjective = distanceToFollower - desiredDistToFollower;
 
-        if (distanceToObjective < -2) speed = 0.0001f;
+                //if (distanceToObjective > 0) speed += 0.05f * distanceToObjective;
+                //if (distanceToObjective < 0) speed += 0.1f * distanceToObjective;
 
-        previousDistanceToFollower = distanceToObjective;
+                speed = distanceToObjective;
+
+                speed = Mathf.Clamp(speed, 0, float.MaxValue);
+
+                return;
+            }
+            else
+            {
+                distanceToFollower = Vector3.Distance(transform.position, follower.position);
+                //if (isDeathWall) distanceToFollower *= -1;
+                //float distanceToObjective = follower.parent.GetComponent<AICarMovementV3>().distToNode - distanceToFollower;
+                distanceToObjective = desiredDistToFollower - distanceToFollower;
+            }           
+
+            float derivate = 0;
+            if (Time.deltaTime != 0)
+            {
+                derivate = (distanceToObjective - previousDistanceToFollower) / Time.deltaTime;
+                //if (isDeathWall && distanceToObjective < 0) derivate *= -1;
+            }
+
+            speed += derivate * Time.deltaTime;            
+
+            speed = Mathf.Clamp(speed, 0, float.MaxValue);            
+
+            previousDistanceToFollower = distanceToObjective;
+
+            //if (distanceToObjective < 0 && isDeathWall) speed = 0;
+                        
+        }
+        else
+        {
+            speed = 0.0001f;
+        }
     }
 
     void ChangeToNextSpline()
@@ -348,7 +391,8 @@ public class FollowPathV2 : MonoBehaviour
             }
         }
 
-        currentSpline.GetComponent<MeshCollider>().enabled = true;
+        //currentSpline.GetComponent<MeshCollider>().enabled = true;
         return;
     }
+    
 }

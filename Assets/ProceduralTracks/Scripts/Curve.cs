@@ -54,9 +54,9 @@ public class Curve : TrackElement
         }
         if(state != lastState)
         {            
-            Load();
+            //Load();
             Connect();
-            if (splines != null) Extrude();
+            //if (splines != null) Extrude();
         }
         lastState = state;
 

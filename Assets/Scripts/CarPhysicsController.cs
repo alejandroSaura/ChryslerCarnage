@@ -5,6 +5,8 @@ public class CarPhysicsController : MonoBehaviour
 {
     // Parameters ----------------------------------------------------
 
+    public float powerPenalization = 0;
+
     public AnimationCurve enginePowerTorqueCurve;
     public float enginePower = 10;
     public float brakePower = 1000;    
@@ -230,10 +232,11 @@ public class CarPhysicsController : MonoBehaviour
 
         // user sets a percentage of the maxEngineTorque
         float maxEngineTorque = enginePowerTorqueCurve.Evaluate(rawEngineRPM / maxRPM) * enginePower;
-        engineTorque = input.userThrottle * maxEngineTorque;
+        // apply power penalization
+        engineTorque = input.userThrottle * maxEngineTorque * (1.0f - powerPenalization / 100.0f);
         
         float driveTorque = engineTorque * gearRatios[currentGear] * differentialRatio * transmissionEfficiency; // / wheelRadius;
-        // transfer driveTorque to the wheels, they will apply the force (if not sliding)
+        // transfer driveTorque to the wheels, they will apply the foce (if not sliding)
         frontLeftWheel.driveTorque = driveTorque / 4;
         frontRightWheel.driveTorque = driveTorque / 4;
         backLeftWheel.driveTorque = driveTorque / 4;

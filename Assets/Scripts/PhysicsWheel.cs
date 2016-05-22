@@ -17,6 +17,8 @@ public class PhysicsWheel : MonoBehaviour
     public AnimationCurve velocityToSideSlip;
     public AnimationCurve slipToSideSlip;
     public AnimationCurve maxSteerAngleCurve;
+    public float maxTorqueflip=200.0f;
+
 
     // animation adjustment params
     public float upAmplitude = 0.5f;
@@ -58,6 +60,9 @@ public class PhysicsWheel : MonoBehaviour
     float meanWeightSupported;
     float tractionTorque;
     float tractionForce;
+
+    float flipTorque;
+    bool touchingGround;
 
     Vector4 slipColor;
     Vector4 tractionColor;
@@ -109,7 +114,8 @@ public class PhysicsWheel : MonoBehaviour
     }
 
     void FixedUpdate ()
-    {    
+    {
+
         Vector3 velocity = mRigidbody.velocity;
         tangentialVelocity = transform.InverseTransformDirection(velocity).z;
         latVelocity = transform.InverseTransformDirection(velocity).y;
@@ -138,7 +144,7 @@ public class PhysicsWheel : MonoBehaviour
             && Vector3.Angle(transform.right, -normal) > 120) // if the wheel is touching the ground //and the angle of collision is reasonable
         {
             #region particularCases
-
+            touchingGround = true;
             if (tangentialVelocity < 0.1f && brakeTorque > 0) // car stopped and brake and throttle pressed
             {
                 tractionTorque = 0;
@@ -217,7 +223,7 @@ public class PhysicsWheel : MonoBehaviour
             //Vector3 direction = transform.up;
 
             sideSlipAngle = Vector3.Angle(transform.forward, velocity);
-            if (sideSlipAngle > 90) sideSlipAngle = 180 - sideSlipAngle;
+            //if (sideSlipAngle > 180) sideSlipAngle = 360 - sideSlipAngle;
             sideSlipAngleRatio = 1 - sideSlipAngle / 180;
             //Debug.Log(sideSlipAngle);
 
@@ -227,7 +233,7 @@ public class PhysicsWheel : MonoBehaviour
             if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude > 10)) // high speed turning
             {
                 //lateralForce = direction * sideSlipToForce.Evaluate(sideSlipAngle) * maxLateralForce;
-
+                
                 float driftWeight = 1;
                 if (Input.GetButton("drift") && gameObject.GetComponent<HingeJoint>() == null && Vector3.Angle(velocity, transform.forward) < 30) driftWeight = 0.6f;
 
@@ -246,6 +252,7 @@ public class PhysicsWheel : MonoBehaviour
 
                 lateralForce = direction * maxLateralForce; //* sideSlipToForce.Evaluate(sideSlipAngle);
             }
+            
             else if ((transform.parent.GetComponent<Rigidbody>().velocity.magnitude) <= 10f) // low speed turning
             {
                 lateralForce =
@@ -304,8 +311,24 @@ public class PhysicsWheel : MonoBehaviour
                 axisRigidBody.GetComponent<ConfigurableJoint>().linearLimitSpring = spring;
             }
         }
+
+        //else if(Vector3.Dot(transform.right,Vector3.down) > 0 ) //in air control, car is correct orientation
+        //{
+
+
+        //}
+        #region AirControl
+        if (Vector3.Dot(transform.right,Vector3.down) > 0) // car is upside down
+        {
+           // maxSteerAngle = maxSteerAngleCurve.Evaluate(velocity.magnitude);
+            flipTorque = input.userLeftStickHorizontal * maxTorqueflip;
+
+            body.AddRelativeTorque(new Vector3(0, 0, flipTorque));
+        }
+        #endregion
         else
         {
+           // touchingGround = false;
             #region wheelInAir
             if (brakeTorque > 0 && driveTorque > 0)
             {
