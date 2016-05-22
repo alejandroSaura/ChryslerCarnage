@@ -12,10 +12,6 @@ public class DamageParticle : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //if (hpRef.carHP < 75)
-        //{
             smokeParticle.maxParticles = Mathf.RoundToInt(100 - hpRef.carHP)*2;
-      //  }
-        //smokeParticle.maxParticles = 10;
 	}
 }
