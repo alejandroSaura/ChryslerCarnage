@@ -62,11 +62,22 @@ public class GameManager : MonoBehaviour {
         carRespawner.follower = cars[0].transform;
     }
 
-    public void RespawnCar(CarRaceController carToRespawn) {
+    public void RespawnCar(CarRaceController carToRespawn)
+    {
         Debug.Log("Car is Respawning");
         carToRespawn.gameObject.transform.position = carRespawner.transform.position + carRespawner.transform.up * 2;
-        carToRespawn.gameObject.transform.rotation = carRespawner.transform.rotation;
+
+        if (carRespawner.reverse)
+        {
+            carToRespawn.gameObject.transform.rotation = carRespawner.transform.rotation * Quaternion.Euler(0, 180, 0);
+        }
+        else
+        {
+            carToRespawn.gameObject.transform.rotation = carRespawner.transform.rotation;
+        }
+
         carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().currentSpline = carRespawner.currentSpline;
+        carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().reverse = carRespawner.reverse;
 
     }
     public void LapCounter()

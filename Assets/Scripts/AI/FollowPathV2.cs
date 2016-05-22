@@ -135,7 +135,9 @@ public class FollowPathV2 : MonoBehaviour
                 //if (isDeathWall && distanceToObjective < 0) derivate *= -1;
             }
 
-            speed += derivate * Time.deltaTime;            
+            speed += derivate * Time.deltaTime;
+
+            if (distanceToObjective < 0) speed = 0.001f;
 
             speed = Mathf.Clamp(speed, 0, float.MaxValue);            
 
