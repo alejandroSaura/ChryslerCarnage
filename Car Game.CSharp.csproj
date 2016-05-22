@@ -98,6 +98,8 @@
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\CameraPivotController.cs" />
     <Compile Include="Assets\Scripts\CarPhysicsController.cs" />
+    <Compile Include="Assets\Scripts\CarRaceController.cs" />
+    <Compile Include="Assets\Scripts\DeathWallBehaviour.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\MeshExporter.cs" />
