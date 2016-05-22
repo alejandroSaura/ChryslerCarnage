@@ -83,5 +83,6 @@ public class GameManager : MonoBehaviour {
     public void LapCounter()
     {
         Debug.Log("Thats A Lap");
+        pathDecisor.CalculateLapPath();
     }
 }

@@ -85,14 +85,14 @@ public class AICarMovementV3 : InputInterface
             Physics.Raycast(transform.position, -transform.forward, out hitBehind);
 
             bool somethingAhead = false;
-            if (hit.distance < 5)
+            if (hit.distance < 2)
             {
                 //Debug.Log("something ahead!");
                 somethingAhead = true;
             }
 
             bool somethingBehind = false;
-            if (hitBehind.distance < 5)
+            if (hitBehind.distance < 2)
             {
                 //Debug.Log("something behind!");
                 somethingBehind = true;
