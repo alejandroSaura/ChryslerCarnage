@@ -20,6 +20,8 @@ public struct BezierData
 [ExecuteInEditMode]
 public class BezierSpline : MonoBehaviour
 {
+    public Transform magicWall;
+
     public bool isPath = false;
 
     // for making paths
@@ -49,6 +51,11 @@ public class BezierSpline : MonoBehaviour
     {
         length = GetLength();
         curve = GetComponentInParent<TrackElement>();
+    }
+
+    void Awake()
+    {
+        magicWall = transform.FindChild("Magic Walls");
     }
 
     public BezierData GetData()

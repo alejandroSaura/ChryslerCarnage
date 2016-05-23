@@ -144,7 +144,11 @@ public class Track : MonoBehaviour
         {
             foreach (BezierSpline s in splines)
             {
-                s.isPath = false;
+                s.isPath = false;                
+                if (s.magicWall != null)
+                {
+                    s.magicWall.gameObject.SetActive(false);
+                }
             }
             return;
         }
@@ -155,8 +159,19 @@ public class Track : MonoBehaviour
             if (isPath)
             {
                 s.isPath = true;
+                if (s.magicWall != null)
+                {
+                    s.magicWall.gameObject.SetActive(false);
+                }
             }
-            else s.isPath = false;
+            else
+            {
+                s.isPath = false;
+                if (s.magicWall != null)
+                {
+                    s.magicWall.gameObject.SetActive(true);
+                }
+            }
         }
     }
 
@@ -166,7 +181,11 @@ public class Track : MonoBehaviour
         int i = 0;
         while (i < meshFilters.Length)
         {
-            if (meshFilters[i].gameObject != gameObject)
+            if (meshFilters[i].gameObject != gameObject 
+                && meshFilters[i].gameObject.name != "arrow"
+                && meshFilters[i].gameObject.name != "arrow (1)"
+                && meshFilters[i].gameObject.name != "arrow (2)"
+                )
             {
                 //meshFilters[i].gameObject.SetActive(true);
                 meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
