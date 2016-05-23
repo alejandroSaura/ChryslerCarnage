@@ -25,6 +25,18 @@ public class CarRaceController : MonoBehaviour
         }
     }
 
+    void OnGUI()
+    {
+        if (gameObject.GetComponent<UserInput>() != null)
+        {
+            GUI.Box(new Rect(1000, 60, 300, 50), "Position");
+            GUI.TextArea(new Rect(1000, 80, 290, 20), this.position.ToString());
+        }
+
+
+
+    }
+
 
     // Use this for initialization
     void Start ()

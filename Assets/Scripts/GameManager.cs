@@ -84,10 +84,21 @@ public class GameManager : MonoBehaviour
         else
         {
             carToRespawn.gameObject.transform.rotation = carRespawner.transform.rotation;
+            carToRespawn.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
 
         carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().currentSpline = carRespawner.currentSpline;
         carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().reverse = carRespawner.reverse;
+
+    }
+
+    void OnGUI()
+    {
+
+        GUI.Box(new Rect(1000, 10, 300, 50), "LAP");
+        GUI.TextArea(new Rect(1000, 30, 290, 20), lapNumber.ToString());
+
+        
 
     }
 

@@ -59,7 +59,7 @@ public class Track : MonoBehaviour
 
             if (state == "EditorMode")
             {
-                ReactivateMeshes();
+                //ReactivateMeshes();
                 RemovePath();
             }
 
@@ -188,10 +188,11 @@ public class Track : MonoBehaviour
                 )
             {
                 //meshFilters[i].gameObject.SetActive(true);
-                meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                //meshFilters[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
                 
                 //meshFilters[i].gameObject.GetComponent<MeshCollider>().enabled = false;
                 Destroy(meshFilters[i].gameObject.GetComponent<MeshCollider>());
+                Destroy(meshFilters[i].gameObject.GetComponent<MeshRenderer>());
             }
             i++;
         }

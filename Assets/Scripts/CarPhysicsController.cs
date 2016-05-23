@@ -158,16 +158,16 @@ public class CarPhysicsController : MonoBehaviour
     void OnGUI()
     {      
 
-        GUI.Box(new Rect(10, 10, 300, 200), "Debug Data");
-        GUI.TextArea(new Rect(15, 30, 290, 20), "Forward velocity = " + velocity_forward * 3.6f + " km/h");
+        //GUI.Box(new Rect(10, 10, 300, 200), "Debug Data");
+        //GUI.TextArea(new Rect(15, 30, 290, 20), "Forward velocity = " + velocity_forward * 3.6f + " km/h");
 
-        Vector3 acceleration = transform.InverseTransformDirection((mRigidbody.velocity - lastVelocity) / Time.deltaTime);
-        float tangentialAcceleration = acceleration.z;
-        GUI.TextArea(new Rect(15, 60, 290, 20), "Forward acceleration = " + tangentialAcceleration + " m/s^2");
+        //Vector3 acceleration = transform.InverseTransformDirection((mRigidbody.velocity - lastVelocity) / Time.deltaTime);
+        //float tangentialAcceleration = acceleration.z;
+        //GUI.TextArea(new Rect(15, 60, 290, 20), "Forward acceleration = " + tangentialAcceleration + " m/s^2");
 
-        GUI.TextArea(new Rect(15, 90, 290, 20), "engineRPM = " + engineRPM);
-        GUI.TextArea(new Rect(15, 120, 290, 20), "rawEngineRPM = " + rawEngineRPM);
-        GUI.TextArea(new Rect(15, 150, 290, 20), "Current Gear= " + currentGear);
+        //GUI.TextArea(new Rect(15, 90, 290, 20), "engineRPM = " + engineRPM);
+        //GUI.TextArea(new Rect(15, 120, 290, 20), "rawEngineRPM = " + rawEngineRPM);
+        //GUI.TextArea(new Rect(15, 150, 290, 20), "Current Gear= " + currentGear);
 
     }
 
