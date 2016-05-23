@@ -24,6 +24,7 @@ public class LapTrigger : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         CarRaceController car = other.GetComponent<CarRaceController>();
+        if (car == null) car = other.transform.parent.GetComponent<CarRaceController>();
         if (car != null)
         {
             if (Vector3.Dot(transform.forward, other.transform.forward) < 0)

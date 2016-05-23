@@ -20,6 +20,7 @@ public class DeathWallBehaviour : MonoBehaviour {
     void  OnTriggerEnter(Collider other)
     {
         CarRaceController car = other.GetComponent<CarRaceController>();
+        if(car == null ) car = other.transform.parent.GetComponent<CarRaceController>();
         if (car != null)
         {
             Debug.Log("It went through");
