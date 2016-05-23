@@ -2,20 +2,21 @@
 using System.Collections;
 
 public class UserInput : InputInterface 
-{	
+{
+    public string playerNumber = "";
 	
 	void Update ()
 	{
 		if (Input.GetJoystickNames ().Length != 0) 
 		{ //XboxController
-			userThrottle = Input.GetAxis ("RT");
-			userBrake = Input.GetAxis ("LT");
+			userThrottle = Input.GetAxis (playerNumber+"RT");
+			userBrake = Input.GetAxis (playerNumber+"LT");
 
-			userLeftStickHorizontal = Input.GetAxis ("Horizontal");
-			userLeftStickVertical = Input.GetAxis ("Vertical");
+			userLeftStickHorizontal = Input.GetAxis (playerNumber + "Horizontal");
+			userLeftStickVertical = Input.GetAxis (playerNumber + "Vertical");
 
-			userRightStickHorizontal = Input.GetAxis ("Horizontal2");
-			userRightStickVertical = Input.GetAxis ("Vertical2");
+			userRightStickHorizontal = Input.GetAxis (playerNumber + "Horizontal2");
+			userRightStickVertical = Input.GetAxis (playerNumber + "Vertical2");
 
 			//			if (Input.GetButton ("RB") && !Input.GetButton ("LB")) {
 			//				userRoll = -1f;
