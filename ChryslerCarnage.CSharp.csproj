@@ -105,6 +105,7 @@
     <Compile Include="Assets\Scripts\Destruction\DamageScriptMikko.cs" />
     <Compile Include="Assets\Scripts\Destruction\ParticleAutoDestroy.cs" />
     <Compile Include="Assets\Scripts\Destruction\WheelDustScript.cs" />
+    <Compile Include="Assets\Scripts\FinishLine.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\InputInterface.cs" />
     <Compile Include="Assets\Scripts\LapTrigger.cs" />

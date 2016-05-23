@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
+
+    public int lapNumber = 0;
 
     PathDecisor pathDecisor;
     List<CarRaceController> cars;
@@ -16,6 +19,8 @@ public class GameManager : MonoBehaviour {
 
     public float[] positionPenalization = new float[4];
 
+    GameObject finishLine;
+    LapTrigger[] triggers;
 
     void Start ()
     {
@@ -24,6 +29,9 @@ public class GameManager : MonoBehaviour {
         deathWallFollower = GameObject.Find("DeathWall").GetComponent<FollowPathV2>();
         deathWallFollower.followFromBehind = true;
         deathWallFollower.desiredDistToFollower = deathWallDistance;
+
+        finishLine = GameObject.Find("FinishLine");
+        triggers = GameObject.Find("LapTriggers").GetComponentsInChildren<LapTrigger>();
 
         pathDecisor = gameObject.GetComponent<PathDecisor>();
 
@@ -42,6 +50,8 @@ public class GameManager : MonoBehaviour {
     {
         SortCars();
         UpdateDeathWall();
+
+        //pathDecisor.CalculateLapPath();
     }
 
     void SortCars()
@@ -80,9 +90,22 @@ public class GameManager : MonoBehaviour {
         carToRespawn.transform.FindChild("NodeToFollow").GetComponent<FollowPathV2>().reverse = carRespawner.reverse;
 
     }
+
     public void LapCounter()
     {
         Debug.Log("Thats A Lap");
         pathDecisor.CalculateLapPath();
+
+        finishLine.SetActive(true);
+    }
+
+    public void FinishLineCrossed()
+    {
+        lapNumber++;
+        
+        for (int i = 0; i < triggers.Length; i++)
+        {
+            triggers[i].gameObject.SetActive(true);
+        }
     }
 }

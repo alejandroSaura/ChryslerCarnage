@@ -71,10 +71,13 @@ public class PathDecisor : MonoBehaviour
             }
 
             currentPOI.OutgoingWay = currentPOI.neighbours.FirstOrDefault(n => n.Value == nextPOI).Key;
+
             if (nextPOI != startPOI)
                 nextPOI.IncomingWay = nextPOI.neighbours.FirstOrDefault(n => n.Value == currentPOI).Key;
             else
                 nextIncomingWay = nextPOI.neighbours.FirstOrDefault(n => n.Value == currentPOI).Key;
+
+            //nextPOI.IncomingWay = nextPOI.neighbours.FirstOrDefault(n => n.Value == currentPOI).Key;
 
             currentPOI.Visited = true;
 

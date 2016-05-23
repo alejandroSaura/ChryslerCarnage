@@ -25,12 +25,14 @@ public class LapTrigger : MonoBehaviour
     {
         CarRaceController car = other.GetComponent<CarRaceController>();
         if (car == null) car = other.transform.parent.GetComponent<CarRaceController>();
-        if (car != null)
+        if (car != null && car.position == 1 && other.gameObject.name != "NodeToFollow")
         {
             if (Vector3.Dot(transform.forward, other.transform.forward) < 0)
             {
                 Debug.Log("It went through");
                 gameManager.LapCounter();
+
+                gameObject.SetActive(false);
             }
         }
     }
